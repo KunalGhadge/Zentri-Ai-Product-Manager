@@ -13,14 +13,10 @@ export default async function Page() {
     return redirect("/login");
   }
 
-  const isAddingDisabled = process.env.NOT_ALLOW_ADD_MCP_SERVERS;
-
   const t = await getTranslations("Info");
   let message: string | undefined;
 
-  if (isAddingDisabled) {
-    message = t("mcpAddingDisabled");
-  } else if (IS_VERCEL_ENV) {
+  if (IS_VERCEL_ENV) {
     message = t("vercelSyncDelay");
   }
 

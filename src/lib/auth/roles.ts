@@ -25,7 +25,7 @@ export const user = ac.newRole({
   // Restricted app permissions
   workflow: ["view", "use", "list"],
   agent: ["view", "use", "list"],
-  mcp: ["view", "use", "list"],
+  mcp: [...Object.values(PERMISSION_TYPES)],
   chat: [...Object.values(PERMISSION_TYPES)],
   temporaryChat: [...Object.values(PERMISSION_TYPES)],
 });
@@ -38,7 +38,7 @@ export const editor = ac.newRole({
   // Full app permissions
   workflow: [...Object.values(PERMISSION_TYPES)],
   agent: [...Object.values(PERMISSION_TYPES)],
-  mcp: ["create", "view", "update", "delete", "use", "list"],
+  mcp: [...Object.values(PERMISSION_TYPES)],
   chat: [...Object.values(PERMISSION_TYPES)],
   temporaryChat: [...Object.values(PERMISSION_TYPES)],
 });
