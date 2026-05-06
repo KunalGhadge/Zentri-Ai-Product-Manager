@@ -12,7 +12,11 @@ import {
 
 import { customModelProvider, isToolCallUnsupportedModel } from "lib/ai/models";
 
-import { agentRepository, chatRepository, userRepository } from "lib/db/repository";
+import {
+  agentRepository,
+  chatRepository,
+  userRepository,
+} from "lib/db/repository";
 import globalLogger from "logger";
 import {
   buildMcpServerCustomizationsSystemPrompt,
@@ -374,38 +378,56 @@ export async function POST(request: Request) {
         // --- PHASE 5: Self-Evolving Context (Background Summarizer) ---
         // Run asynchronously to avoid blocking the UI response.
         // We trigger this when the conversation has enough context (e.g., every 4 turns).
-        const messageCount = messages.length + 2; 
+        const messageCount = messages.length + 2;
         if (messageCount > 4 && messageCount % 4 === 0) {
           (async () => {
             try {
-              const currentPrefs = await userRepository.getPreferences(session.user.id) || {};
-              const previousProfile = (currentPrefs as any).companyProfile || "No existing profile.";
-              
-              const summaryPrompt = `
-You are a background AI tasked with updating the "Living Company Profile" for a startup.
+              const currentPrefs =
+                (await userRepository.getPreferences(session.user.id)) || {};
+              const previousProfile =
+                (currentPrefs as any).companyProfile || "No existing profile.";
+
+              const chatLog = messages
+                .map((m) => {
+                  const textContent = m.parts
+                    .map((p: any) => p.text || "")
+                    .join("");
+                  return m.role + ": " + textContent;
+                })
+                .join("\n");
+              const userText = message.parts
+                .map((p: any) => p.text || "")
+                .join("");
+              const assistantText = responseMessage.parts
+                .map((p: any) => p.text || "")
+                .join("");
+
+              const summaryPrompt = `You are a background AI tasked with updating the "Living Company Profile" for a startup.
 Here is the previous Company Profile:
 ---
 ${previousProfile}
 ---
 Here is the latest chat conversation:
-${messages.map(m => \`\${m.role}: \${m.parts.map((p:any) => p.text || '').join('')}\`).join('\n')}
-user: ${message.parts.map((p:any) => p.text || '').join('')}
-assistant: ${responseMessage.parts.map((p:any) => p.text || '').join('')}
+${chatLog}
+user: ${userText}
+assistant: ${assistantText}
 
 Task: Extract ONLY permanent, strategic product decisions made in this conversation. Merge them into the existing profile. Keep it concise. Do not include casual conversation.
-Return ONLY the updated profile text.
-`;
+Return ONLY the updated profile text.`;
               const { text: updatedProfile } = await generateText({
                 model,
-                system: "You are an AI memory manager. Return strictly the updated profile.",
+                system:
+                  "You are an AI memory manager. Return strictly the updated profile.",
                 prompt: summaryPrompt,
               });
-              
+
               await userRepository.updatePreferences(session.user.id, {
                 ...currentPrefs,
-                companyProfile: updatedProfile
+                companyProfile: updatedProfile,
               } as any);
-              logger.info("Phase 5: Successfully updated Self-Evolving Company Profile in background.");
+              logger.info(
+                "Phase 5: Successfully updated Self-Evolving Company Profile in background.",
+              );
             } catch (e) {
               logger.error("Phase 5: Background summarizer failed: " + e);
             }
