@@ -119,7 +119,12 @@ export class MCPClientsManager {
                 // New servers or servers without cache — connect in background
                 // On Vercel, we skip background connect to keep cold starts fast
                 if (process.env.VERCEL === "1") {
-                  this.addClientWithCachedToolInfo(id, name, config, toolInfo || []);
+                  this.addClientWithCachedToolInfo(
+                    id,
+                    name,
+                    config,
+                    toolInfo || [],
+                  );
                   return Promise.resolve();
                 }
 
@@ -197,6 +202,32 @@ export class MCPClientsManager {
     const client = createMCPClient(id, name, serverConfig, {
       autoDisconnectSeconds: this.autoDisconnectSeconds,
       initialToolInfo: cachedToolInfo,
+      onToolInfoUpdate: (toolInfo) => {
+        this.storage?.updateToolInfo?.(id, toolInfo);
+      },
+      onConnectionStatusChange: (status) => {
+        this.storage?.updateConnectionStatus?.(id, status);
+      },
+    });
+    this.clients.set(id, { client, name });
+  }
+
+  /**
+   * Adds a client to memory with cached tool info, without initiating connection.
+   */
+  addClientWithCachedToolInfo(
+    id: string,
+    name: string,
+    serverConfig: MCPServerConfig,
+    toolInfo: MCPToolInfo[],
+  ) {
+    if (this.clients.has(id)) {
+      const prevClient = this.clients.get(id)!;
+      void prevClient.client.disconnect();
+    }
+    const client = createMCPClient(id, name, serverConfig, {
+      autoDisconnectSeconds: this.autoDisconnectSeconds,
+      initialToolInfo: toolInfo,
       onToolInfoUpdate: (toolInfo) => {
         this.storage?.updateToolInfo?.(id, toolInfo);
       },
