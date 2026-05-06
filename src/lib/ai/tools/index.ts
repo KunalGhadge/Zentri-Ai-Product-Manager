@@ -15,6 +15,8 @@ export enum DefaultToolName {
   Http = "http",
   JavascriptExecution = "mini-javascript-execution",
   PythonExecution = "python-execution",
+  CodebaseSearch = "codebase-search",
+  CodebaseFileContent = "codebase-file-content",
 }
 
 export const SequentialThinkingToolName = "sequential-thinking";

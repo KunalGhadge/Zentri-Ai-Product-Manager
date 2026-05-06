@@ -23,7 +23,7 @@ export const RECOMMENDED_MCPS = [
     config: {
       url: "https://api.githubcopilot.com/mcp/",
       headers: {
-        Authorization: "Bearer ${input:your_github_mcp_pat}",
+        Authorization: "Bearer ${env:GITHUB_PAT}",
       },
     },
     icon: GithubIcon,
@@ -42,12 +42,15 @@ export const RECOMMENDED_MCPS = [
     label: "Linear",
     config: {
       url: "https://mcp.linear.app/sse",
+      headers: {
+        Authorization: "${env:LINEAR_API_KEY}",
+      },
     },
     icon: LinearIcon,
   },
   {
     name: "playwright",
-    label: "Playwright",
+    label: "Playwright (Local)",
     config: {
       command: "npx",
       args: ["@playwright/mcp@latest"],

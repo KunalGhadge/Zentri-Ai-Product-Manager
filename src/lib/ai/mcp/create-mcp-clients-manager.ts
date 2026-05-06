@@ -117,6 +117,12 @@ export class MCPClientsManager {
                   return Promise.resolve();
                 }
                 // New servers or servers without cache — connect in background
+                // On Vercel, we skip background connect to keep cold starts fast
+                if (process.env.VERCEL === "1") {
+                  this.addClientWithCachedToolInfo(id, name, config, toolInfo || []);
+                  return Promise.resolve();
+                }
+
                 return this.addClient(id, name, config).catch(() => {
                   `ignore error`;
                 });
@@ -231,12 +237,18 @@ export class MCPClientsManager {
       const entity = await this.storage.save(server);
       id = entity.id;
     }
-    await this.addClient(id, server.name, server.config).catch((err) => {
-      if (!server.id) {
-        void this.removeClient(id);
-      }
-      throw err;
-    });
+    // On Vercel, we skip the immediate connection during persistence to avoid timeouts.
+    // The connection will happen lazily when a tool is called.
+    if (process.env.VERCEL === "1") {
+      this.addClientWithCachedToolInfo(id, server.name, server.config, []);
+    } else {
+      await this.addClient(id, server.name, server.config).catch((err) => {
+        if (!server.id) {
+          void this.removeClient(id);
+        }
+        throw err;
+      });
+    }
 
     return this.clients.get(id)!;
   }

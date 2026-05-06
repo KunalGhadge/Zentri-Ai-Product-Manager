@@ -8,6 +8,7 @@ import {
   MCPStdioConfigZodSchema,
   type MCPServerConfig,
   type MCPToolInfo,
+  MCP_STDIO_TRANSPORT_TYPE,
 } from "app-types/mcp";
 
 import { isMaybeRemoteConfig, isMaybeStdioConfig } from "./is-mcp-config";
@@ -74,6 +75,21 @@ export class MCPClient {
     if (options.initialToolInfo?.length) {
       this.toolInfo = options.initialToolInfo;
     }
+  }
+
+  private getProcessedConfig(): MCPServerConfig {
+    const configStr = JSON.stringify(this.serverConfig);
+    // Replace ${env:VAR_NAME}, ${VAR_NAME}, or ${input:VAR_NAME} with process.env.VAR_NAME
+    const processedStr = configStr.replace(
+      /\${(?:env:|input:)?([a-zA-Z_][a-zA-Z0-9_]*)}/g,
+      (_, varName) => {
+        const value = process.env[varName];
+        if (value) return value;
+        this.logger.warn(`Environment variable ${varName} not found for MCP config`);
+        return `\${${varName}}`;
+      },
+    );
+    return JSON.parse(processedStr);
   }
 
   get status() {
@@ -204,14 +220,20 @@ export class MCPClient {
         version: "1.0.0",
       });
 
+      const processedConfig = this.getProcessedConfig();
+
       // Create appropriate transport based on server config type
-      if (isMaybeStdioConfig(this.serverConfig)) {
-        // Skip stdio transport
+      if (isMaybeStdioConfig(processedConfig)) {
+        // On Vercel, stdio is technically not supported in standard serverless functions.
+        // We'll allow the transport creation to proceed so it can be saved/managed in the UI,
+        // but it will likely fail during actual connection or tool execution.
         if (IS_MCP_SERVER_REMOTE_ONLY) {
-          throw new Error("VERCEL: Stdio transport is not supported");
+          this.logger.warn(
+            "Stdio transport is being used in a remote-only environment (Vercel). This will likely fail.",
+          );
         }
 
-        const config = MCPStdioConfigZodSchema.parse(this.serverConfig);
+        const config = MCPStdioConfigZodSchema.parse(processedConfig);
         this.transport = new StdioClientTransport({
           command: config.command,
           args: config.args,
@@ -234,8 +256,8 @@ export class MCPClient {
           }),
           CONNET_TIMEOUT,
         );
-      } else if (isMaybeRemoteConfig(this.serverConfig)) {
-        const config = MCPRemoteConfigZodSchema.parse(this.serverConfig);
+      } else if (isMaybeRemoteConfig(processedConfig)) {
+        const config = MCPRemoteConfigZodSchema.parse(processedConfig);
         const abortController = new AbortController();
         const url = new URL(config.url);
         try {

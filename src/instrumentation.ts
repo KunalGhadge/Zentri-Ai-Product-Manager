@@ -22,12 +22,14 @@ export async function register() {
         console.error(e);
         process.exit(1);
       });
-      // Init MCP manager on all environments.
-      // Cached servers are available instantly; new servers connect in background.
-      const initMCPManager = await import("./lib/ai/mcp/mcp-manager").then(
-        (m) => m.initMCPManager,
-      );
-      await initMCPManager();
     }
+
+    // Init MCP manager on all environments.
+    // Cached servers are available instantly; new servers connect in background.
+    // (Lazy on Vercel to keep cold starts fast)
+    const initMCPManager = await import("./lib/ai/mcp/mcp-manager").then(
+      (m) => m.initMCPManager,
+    );
+    await initMCPManager();
   }
 }
