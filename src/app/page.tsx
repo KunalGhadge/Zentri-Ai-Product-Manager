@@ -3,7 +3,7 @@ import { getSession } from "auth/server";
 import { redirect } from "next/navigation";
 
 export default async function RootPage() {
-  let session = null;
+  let session: any = null;
   try {
     session = await getSession();
   } catch (_error) {
