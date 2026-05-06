@@ -12,7 +12,7 @@ export const Navbar = () => {
         >
           <img
             src="/logo-icon.png"
-            alt="Zentri Logo"
+            alt="Zentri AI PM Logo"
             className="h-6 w-auto object-contain transition-transform group-hover:scale-105"
           />
         </Link>

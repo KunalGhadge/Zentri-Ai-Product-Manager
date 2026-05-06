@@ -19,9 +19,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "better-chatbot",
+  title: "Zentri — The Elite AI Product Manager",
   description:
-    "Better Chatbot is a chatbot that uses the Tools to answer questions.",
+    "Transform raw data into strategic product roadmaps with Zentri, your AI-powered PM partner.",
 };
 
 export default async function RootLayout({
