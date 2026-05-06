@@ -22,10 +22,14 @@ export const StartSection = () => {
           Stop guessing. <br /> Start building.
         </h2>
         <p className="text-white/60 font-body font-light text-lg md:text-xl max-w-2xl leading-relaxed">
-          Connect your data. Zentri synthesizes everything—Slack messages, GitHub issues, and user feedback. 
-          Get the clarity you need to build the right thing next.
+          Connect your data. Zentri synthesizes everything—Slack messages,
+          GitHub issues, and user feedback. Get the clarity you need to build
+          the right thing next.
         </p>
-        <Link href="/sign-in" className="liquid-glass-strong rounded-full px-10 py-4 text-white font-bold text-lg hover:scale-105 transition-all shadow-[0_0_50px_rgba(255,255,255,0.1)] flex items-center gap-2">
+        <Link
+          href="/sign-in"
+          className="liquid-glass-strong rounded-full px-10 py-4 text-white font-bold text-lg hover:scale-105 transition-all shadow-[0_0_50px_rgba(255,255,255,0.1)] flex items-center gap-2"
+        >
           Start for Free <ArrowUpRight className="h-5 w-5" />
         </Link>
       </div>

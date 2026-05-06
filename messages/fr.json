@@ -68,7 +68,7 @@
       "createAccount": "Créer un compte"
     },
     "Intro": {
-      "description": "Bienvenue sur better-chatbot. Connectez-vous pour découvrir nos outils de conversation alimentés par l'IA."
+      "description": "Bienvenue sur Zentri AI PM. Connectez-vous pour découvrir nos outils de conversation alimentés par l'IA."
     }
   },
   "Chat": {
@@ -299,7 +299,7 @@
     "generateAgentGreeting": "Bonjour ! Je vais vous aider à créer votre propre agent. Que souhaitez-vous créer ?",
     "generateAgentDetailedGreeting": "Bonjour ! Je vais vous aider à créer votre propre agent. Que souhaitez-vous créer ? Vous pouvez écrire brièvement ou en détail.",
     "inputPromptHere": "saisissez le prompt ici...",
-    "agentNamePlaceholder": "better-agent",
+    "agentNamePlaceholder": "zentri-agent",
     "myAgents": "Mes Agents",
     "sharedAgents": "Agents Partagés",
     "noAgents": "Pas encore d'agents",
@@ -432,8 +432,8 @@
     "toolDescription": "Fournissez les informations nécessaires pour que LLM génère les paramètres d'outil.\n\nUtilisez '/' pour mentionner des données de nœuds précédents.",
     "generateInputWithAIDescription": "Écrivez un prompt pour générer une entrée pour le flux de travail",
     "example": {
-      "babyResearch": "Recherche de Bébé",
-      "getWeather": "Obtenir Météo"
+      "productRoadmap": "Feuille de Route Produit",
+      "userInterview": "Analyseur de Recherche Utilisateur"
     },
     "selectVariable": "Sélectionner Variable",
     "structuredOutput": "Sortie Structurée",

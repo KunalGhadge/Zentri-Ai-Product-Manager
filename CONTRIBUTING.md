@@ -193,5 +193,5 @@ When submitting **Issues** or **Pull Requests**:
 
 ## Thank You
 
-We sincerely appreciate your contribution to better-chatbot.
+We sincerely appreciate your contribution to Zentri AI PM.
 Let’s build a powerful, well tested and lightweight AI experience together! 🚀

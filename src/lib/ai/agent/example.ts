@@ -3,13 +3,15 @@ import { DefaultToolName } from "lib/ai/tools";
 
 export const PRDOptimizerAgent: Partial<Agent> = {
   name: "PRD Optimizer",
-  description: "Perfect your Product Requirements Documents with AI-driven insights",
+  description:
+    "Perfect your Product Requirements Documents with AI-driven insights",
   icon: {
     type: "emoji",
     style: {
       backgroundColor: "oklch(80.8% 0.114 19.571)",
     },
-    value: "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f4dd.png",
+    value:
+      "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f4dd.png",
   },
   instructions: {
     role: "Expert Product Manager",
@@ -59,7 +61,8 @@ export const MarketAnalystAgent: Partial<Agent> = {
     style: {
       backgroundColor: "oklch(84.5% 0.143 164.978)",
     },
-    value: "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f310.png",
+    value:
+      "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f310.png",
   },
   instructions: {
     role: "Strategic Analyst",
@@ -100,7 +103,8 @@ export const RoadmapArchitectAgent: Partial<Agent> = {
     style: {
       backgroundColor: "oklch(82.8% 0.111 230.318)",
     },
-    value: "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f5fa-fe0f.png",
+    value:
+      "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f5fa-fe0f.png",
   },
   instructions: {
     role: "Product Strategist",
@@ -146,4 +150,3 @@ Always offer to create a Table or Chart to visualize the final roadmap plan.
 `.trim(),
   },
 };
-

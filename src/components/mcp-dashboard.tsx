@@ -69,8 +69,7 @@ export default function MCPDashboard({ message, user }: MCPDashboardProps) {
   }, [mcpList]);
 
   const displayIcons = useMemo(() => {
-    const shuffled = [...RECOMMENDED_MCPS].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, 5);
+    return RECOMMENDED_MCPS.slice(0, 5);
   }, []);
 
   // Delay showing validating spinner until validating persists for 500ms

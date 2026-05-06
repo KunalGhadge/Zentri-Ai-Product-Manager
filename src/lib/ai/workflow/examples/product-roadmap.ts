@@ -22,7 +22,10 @@ export const productRoadmapNodes: Partial<DBNode>[] = [
         type: "object",
         properties: {
           vision: { type: "string" },
-          timeline: { type: "string", description: "Desired timeline (e.g., 6 months, 1 year)" },
+          timeline: {
+            type: "string",
+            description: "Desired timeline (e.g., 6 months, 1 year)",
+          },
         },
         required: ["vision"],
       },

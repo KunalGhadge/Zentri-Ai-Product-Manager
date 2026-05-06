@@ -78,9 +78,9 @@ export class MCPClient {
 
   private getProcessedConfig(): MCPServerConfig {
     const configStr = JSON.stringify(this.serverConfig);
-    // Replace ${env:VAR_NAME}, ${VAR_NAME}, or ${input:VAR_NAME} with process.env.VAR_NAME
+    // Replace ${env:VAR_NAME} or ${input:VAR_NAME} with process.env.VAR_NAME
     const processedStr = configStr.replace(
-      /\${(?:env:|input:)?([a-zA-Z_][a-zA-Z0-9_]*)}/g,
+      /\${(?:env:|input:)([a-zA-Z_][a-zA-Z0-9_]*)}/g,
       (_, varName) => {
         const value = process.env[varName];
         if (value) return value;

@@ -362,7 +362,7 @@ NOT_ALLOW_ADD_MCP_SERVERS=
 
 ## 📘 Guides
 
-Step-by-step setup guides for running and configuring zentri-ai-pm.
+Step-by-step setup guides for running and configuring Zentri AI PM.
 
 #### [🔌 MCP Server Setup & Tool Testing](./docs/tips-guides/mcp-server-setup-and-tool-testing.md)
 
@@ -405,7 +405,7 @@ Step-by-step setup guides for running and configuring zentri-ai-pm.
 
 ## 🗺️ Roadmap
 
-Planned features coming soon to zentri-ai-pm:
+Planned features coming soon to Zentri AI PM:
 
 - [x] **File Upload & Storage** (Vercel Blob integration)
 - [x] **Image Generation**

@@ -7,7 +7,7 @@ export const Stats = () => {
     { value: "10k+", label: "Decisions made" },
     { value: "85%", label: "Less documentation" },
     { value: "4.2x", label: "Faster delivery" },
-    { value: "100%", label: "Data clarity" }
+    { value: "100%", label: "Data clarity" },
   ];
 
   return (
@@ -21,7 +21,7 @@ export const Stats = () => {
       <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-black to-transparent z-1" />
 
       <div className="relative z-10 w-full max-w-7xl px-8">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -32,8 +32,12 @@ export const Stats = () => {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-16 text-center relative z-10">
             {stats.map((s, i) => (
               <div key={i} className="flex flex-col gap-6">
-                <span className="text-6xl md:text-8xl font-heading italic text-white leading-none tracking-tighter">{s.value}</span>
-                <span className="text-white/40 font-body font-medium text-xs uppercase tracking-[0.3em]">{s.label}</span>
+                <span className="text-6xl md:text-8xl font-heading italic text-white leading-none tracking-tighter">
+                  {s.value}
+                </span>
+                <span className="text-white/40 font-body font-medium text-xs uppercase tracking-[0.3em]">
+                  {s.label}
+                </span>
               </div>
             ))}
           </div>

@@ -20,13 +20,17 @@ export const Hero = () => {
 
       <div className="relative z-10 flex flex-col items-center max-w-4xl">
         {/* Badge */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           className="liquid-glass rounded-full px-1 py-1 mb-12 flex items-center gap-3 pr-4"
         >
-          <span className="bg-white text-black rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider">New</span>
-          <span className="text-white text-xs font-medium font-body">Introducing Zentri: Your AI Product Manager.</span>
+          <span className="bg-white text-black rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider">
+            New
+          </span>
+          <span className="text-white text-xs font-medium font-body">
+            Introducing Zentri: Your AI Product Manager.
+          </span>
         </motion.div>
 
         {/* Heading */}
@@ -42,8 +46,9 @@ export const Hero = () => {
           transition={{ duration: 0.8, delay: 0.8 }}
           className="text-base md:text-xl text-white/70 font-body font-light leading-relaxed max-w-xl mb-12"
         >
-          Zentri helps founders decide what to build next using their product data. 
-          The product brain for indie hackers and startup teams who want clear decisions, not just dashboards.
+          Zentri helps founders decide what to build next using their product
+          data. The product brain for indie hackers and startup teams who want
+          clear decisions, not just dashboards.
         </motion.p>
 
         {/* CTAs */}
@@ -53,7 +58,10 @@ export const Hero = () => {
           transition={{ duration: 0.8, delay: 1.1 }}
           className="flex flex-wrap items-center justify-center gap-8"
         >
-          <Link href="/sign-in" className="liquid-glass-strong rounded-full px-8 py-3.5 flex items-center gap-2 text-white font-semibold hover:scale-105 transition-all shadow-2xl">
+          <Link
+            href="/sign-in"
+            className="liquid-glass-strong rounded-full px-8 py-3.5 flex items-center gap-2 text-white font-semibold hover:scale-105 transition-all shadow-2xl"
+          >
             Get Started <ArrowUpRight className="h-5 w-5" />
           </Link>
           <button className="flex items-center gap-3 text-white/90 font-medium hover:text-white transition-all group">
@@ -66,7 +74,7 @@ export const Hero = () => {
       </div>
 
       {/* Partners Bar */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5, duration: 1 }}
@@ -77,7 +85,10 @@ export const Hero = () => {
         </div>
         <div className="flex flex-wrap justify-center items-center gap-12 md:gap-20 opacity-30 grayscale invert brightness-0 contrast-200">
           {["Stripe", "Vercel", "Linear", "Notion", "Figma"].map((name) => (
-            <span key={name} className="text-2xl md:text-4xl font-heading italic text-white whitespace-nowrap">
+            <span
+              key={name}
+              className="text-2xl md:text-4xl font-heading italic text-white whitespace-nowrap"
+            >
               {name}
             </span>
           ))}

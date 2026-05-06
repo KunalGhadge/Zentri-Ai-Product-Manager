@@ -5,10 +5,16 @@ import fs from "fs";
 import path from "path";
 
 export const codebaseSearchTool = createTool({
-  description: "Search the local codebase for specific keywords or patterns. This is a built-in expert tool for understanding the current project structure and logic.",
+  description:
+    "Search the local codebase for specific keywords or patterns. This is a built-in expert tool for understanding the current project structure and logic.",
   inputSchema: z.object({
-    query: z.string().describe("Keyword or pattern to search for in the codebase"),
-    extension: z.string().optional().describe("Filter by file extension (e.g., .ts, .tsx)"),
+    query: z
+      .string()
+      .describe("Keyword or pattern to search for in the codebase"),
+    extension: z
+      .string()
+      .optional()
+      .describe("Filter by file extension (e.g., .ts, .tsx)"),
     maxResults: z.number().optional().default(10),
   }),
   execute: async ({ query, extension, maxResults }) => {
@@ -29,13 +35,20 @@ export const codebaseSearchTool = createTool({
           const fullPath = path.join(dir, file);
           const stat = fs.statSync(fullPath);
           if (stat.isDirectory()) {
-            if (file === "node_modules" || file === ".next" || file === ".git") continue;
+            if (file === "node_modules" || file === ".next" || file === ".git")
+              continue;
             searchFiles(fullPath);
           } else if (stat.isFile()) {
             if (extension && !file.endsWith(extension)) continue;
             // Skip binary or huge files
-            if (file.endsWith(".png") || file.endsWith(".jpg") || file.endsWith(".ico") || stat.size > 1024 * 1024) continue;
-            
+            if (
+              file.endsWith(".png") ||
+              file.endsWith(".jpg") ||
+              file.endsWith(".ico") ||
+              stat.size > 1024 * 1024
+            )
+              continue;
+
             const content = fs.readFileSync(fullPath, "utf8");
             const lines = content.split("\n");
             for (let i = 0; i < lines.length; i++) {
@@ -61,13 +74,17 @@ export const codebaseSearchTool = createTool({
 export const codebaseFileContentTool = createTool({
   description: "Read the content of a specific file from the codebase.",
   inputSchema: z.object({
-    path: z.string().describe("Path to the file relative to the project root (e.g., src/lib/utils.ts)"),
+    path: z
+      .string()
+      .describe(
+        "Path to the file relative to the project root (e.g., src/lib/utils.ts)",
+      ),
   }),
   execute: async ({ path: filePath }) => {
     return safe(async () => {
       const rootDir = process.cwd();
       const fullPath = path.join(rootDir, filePath);
-      
+
       // Security check: ensure the path is within the project root and doesn't try to escape
       const relative = path.relative(rootDir, fullPath);
       if (relative.startsWith("..") || path.isAbsolute(relative)) {

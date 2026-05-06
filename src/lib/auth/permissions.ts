@@ -391,7 +391,7 @@ export async function canShareMCPServer(): Promise<boolean> {
   try {
     const session = await getSession();
     if (!session?.user) return false;
-    
+
     // Admins and editors can share/feature MCP servers
     return session.user.role === "admin" || session.user.role === "editor";
   } catch (_error) {

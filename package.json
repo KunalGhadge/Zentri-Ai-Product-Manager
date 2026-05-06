@@ -2,7 +2,7 @@
   "name": "zentri-ai-pm",
   "version": "1.26.0",
   "private": true,
-  "author": "Kunal and Aditya",
+  "author": "Kunal Ghadge",
   "license": "MIT",
   "type": "module",
   "scripts": {

@@ -30,7 +30,7 @@ export function callCodeRunWorker(
     };
     setTimeout(() => {
       worker.postMessage(request);
-    }, 1000); // for boot-up effect
+    }, 100); // for boot-up effect
     worker.onmessage = (event) => {
       const response = event.data as CodeWorkerResponse;
       if (response.id !== id) return;

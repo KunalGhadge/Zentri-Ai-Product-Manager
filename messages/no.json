@@ -134,8 +134,8 @@
       "soonMessage": "Kommer snart."
     },
     "example": {
-      "babyResearch": "Baby research",
-      "getWeather": "Sjekk været"
+      "productRoadmap": "Produktveikart",
+      "userInterview": "Brukerundersøkelse-analysator"
     },
     "kindsDescription": {
       "input": "Definer inndataparametere som chatboten vil gi når den bruker denne arbeidsflyten som verktøy.\n\nSpesifiser datastrukturen og valideringsreglene for verktøykjøring.",
@@ -188,7 +188,7 @@
       "createAccount": "Opprett konto"
     },
     "Intro": {
-      "description": "Velkommen til better-chatbot. Logg inn for å oppleve våre AI-drevne samtaleverktøy."
+      "description": "Velkommen til Zentri AI PM. Logg inn for å oppleve våre AI-drevne samtaleverktøy."
     }
   },
   "Chat": {
@@ -440,7 +440,7 @@
     "generateAgentGreeting": "Hei! Jeg hjelper deg med å opprette din egen agent. Hva vil du lage?",
     "generateAgentDetailedGreeting": "Hei! Jeg hjelper deg med å opprette din egen agent. Hva vil du lage? Du kan skrive kort eller detaljert.",
     "inputPromptHere": "skriv ledetekst her...",
-    "agentNamePlaceholder": "bedre-agent",
+    "agentNamePlaceholder": "zentri-agent",
     "myAgents": "Mine agenter",
     "bookmarkedAgents": "Bokmerkede agenter",
     "sharedAgents": "Delte agenter",

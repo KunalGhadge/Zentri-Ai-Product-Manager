@@ -25,7 +25,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "ui/dropdown-menu";
-import { ProductRoadmap, UserInterviewAnalyzer } from "lib/ai/workflow/examples";
+import {
+  ProductRoadmap,
+  UserInterviewAnalyzer,
+} from "lib/ai/workflow/examples";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "ui/dialog";
@@ -191,7 +194,9 @@ export default function WorkflowListPage({
               <DropdownMenuItem onClick={() => createExample(ProductRoadmap())}>
                 🗺️ {t("Workflow.example.productRoadmap")}
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => createExample(UserInterviewAnalyzer())}>
+              <DropdownMenuItem
+                onClick={() => createExample(UserInterviewAnalyzer())}
+              >
                 🔍 {t("Workflow.example.userInterview")}
               </DropdownMenuItem>
             </DropdownMenuContent>

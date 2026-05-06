@@ -61,7 +61,9 @@ export const CtaFooter = () => {
               {[Twitter, Github, Linkedin].map((Icon, i) => (
                 <Link
                   key={i}
-                  href="#"
+                  href={
+                    Icon === Github ? "https://github.com/KunalGhadge" : "#"
+                  }
                   className="h-10 w-10 rounded-full liquid-glass flex items-center justify-center text-white/40 hover:text-white hover:border-white/20 transition-all"
                 >
                   <Icon className="h-4 w-4" />

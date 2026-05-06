@@ -1,6 +1,6 @@
 # Vercel Deployment Guide
 
-The easiest way to get started with **better-chatbot** is to deploy it directly to Vercel.
+The easiest way to get started with **Zentri AI PM** is to deploy it directly to Vercel.
 You only need **one AI Provider API Key** (OpenAI, Gemini, Claude, etc.) to run the app.
 Database, file storage, and caching are all available on free tiers.
 
@@ -9,7 +9,7 @@ Database, file storage, and caching are all available on free tiers.
 ## Steps
 
 1. **Click this button** to start the deployment process:
-   [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/KunalGhadge/Zentri-Ai-Product-Manager&env=BETTER_AUTH_SECRET&env=OPENAI_API_KEY&env=GOOGLE_GENERATIVE_AI_API_KEY&env=ANTHROPIC_API_KEY&envDescription=BETTER_AUTH_SECRET+is+required+%28enter+any+secret+value%29.+At+least+one+LLM+provider+API+key+%28OpenAI,+Claude,+or+Google%29+is+required,+but+you+can+add+all+of+them.+See+the+link+below+for+details.&envLink=https://github.com/KunalGhadge/Zentri-Ai-Product-Manager/blob/main/.env.example&demo-title=better-chatbot&demo-description=An+Open-Source+Chatbot+Template+Built+With+Next.js+and+the+AI+SDK+by+Vercel.&products=[{%22type%22:%22integration%22,%22protocol%22:%22storage%22,%22productSlug%22:%22neon%22,%22integrationSlug%22:%22neon%22},{%22type%22:%22integration%22,%22protocol%22:%22storage%22,%22productSlug%22:%22upstash-kv%22,%22integrationSlug%22:%22upstash%22},{%22type%22:%22blob%22}])
+   [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/KunalGhadge/Zentri-Ai-Product-Manager&env=BETTER_AUTH_SECRET&env=OPENAI_API_KEY&env=GOOGLE_GENERATIVE_AI_API_KEY&env=ANTHROPIC_API_KEY&envDescription=BETTER_AUTH_SECRET+is+required+%28enter+any+secret+value%29.+At+least+one+LLM+provider+API+key+%28OpenAI,+Claude,+or+Google%29+is+required,+but+you+can+add+all+of+them.+See+the+link+below+for+details.&envLink=https://github.com/KunalGhadge/Zentri-Ai-Product-Manager/blob/main/.env.example&demo-title=zentri-ai-pm&demo-description=An+Open-Source+AI+Product+Manager+Built+With+Next.js+and+the+AI+SDK+by+Vercel.&products=[{%22type%22:%22integration%22,%22protocol%22:%22storage%22,%22productSlug%22:%22neon%22,%22integrationSlug%22:%22neon%22},{%22type%22:%22integration%22,%22protocol%22:%22storage%22,%22productSlug%22:%22upstash-kv%22,%22integrationSlug%22:%22upstash%22},{%22type%22:%22blob%22}])
 
 2. **Click the "Create" button** on Vercel to begin setting up your project.
 
