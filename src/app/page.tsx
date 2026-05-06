@@ -6,13 +6,13 @@ export default async function RootPage() {
   let session = null;
   try {
     session = await getSession();
-  } catch (error) {
+  } catch (_error) {
     console.warn("Database connection unavailable, showing landing page.");
   }
-  
+
   if (session) {
     redirect("/chat");
   }
-  
+
   return <LandingPage />;
 }
