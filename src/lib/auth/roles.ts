@@ -22,9 +22,9 @@ export const user = ac.newRole({
   // No user/session management permissions for regular users
   user: [],
   session: [],
-  // Restricted app permissions
-  workflow: ["view", "use", "list"],
-  agent: ["view", "use", "list"],
+  // Full app permissions
+  workflow: [...Object.values(PERMISSION_TYPES)],
+  agent: [...Object.values(PERMISSION_TYPES)],
   mcp: [...Object.values(PERMISSION_TYPES)],
   chat: [...Object.values(PERMISSION_TYPES)],
   temporaryChat: [...Object.values(PERMISSION_TYPES)],

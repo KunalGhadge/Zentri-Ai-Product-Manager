@@ -12,7 +12,7 @@ import { UserDetailContentSkeleton } from "@/components/user/user-detail/user-de
 
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
-export const experimental_ppr = true;
+export const experimental_ppr = false;
 
 export default async function ChatLayout({
   children,

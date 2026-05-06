@@ -162,7 +162,7 @@ const ProviderHeader = memo(function ProviderHeader({
       {!hasAPIKey && (
         <>
           <span className="text-xs ml-auto text-muted-foreground">
-            No API Key
+            Coming Soon
           </span>
         </>
       )}

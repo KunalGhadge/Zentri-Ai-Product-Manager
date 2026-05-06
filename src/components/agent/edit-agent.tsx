@@ -37,8 +37,9 @@ import { GenerateAgentDialog } from "./generate-agent-dialog";
 import { AgentIconPicker } from "./agent-icon-picker";
 import { AgentToolSelector } from "./agent-tool-selector";
 import {
-  RandomDataGeneratorExample,
-  WeatherExample,
+  PRDOptimizerAgent,
+  MarketAnalystAgent,
+  RoadmapArchitectAgent,
 } from "lib/ai/agent/example";
 import { notify } from "lib/notify";
 
@@ -353,20 +354,27 @@ export default function EditAgent({
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-54" align="end">
                     <DropdownMenuItem
-                      onClick={() => setAgent(RandomDataGeneratorExample)}
+                      onClick={() => setAgent(PRDOptimizerAgent)}
                     >
                       <div className="flex items-center gap-2">
-                        <span>🎲</span>
-                        <span>Generate Random Data</span>
+                        <span>📝</span>
+                        <span>PRD Optimizer</span>
                       </div>
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                      data-testid="agent-create-with-example-weather-button"
-                      onClick={() => setAgent(WeatherExample)}
+                      onClick={() => setAgent(MarketAnalystAgent)}
                     >
                       <div className="flex items-center gap-2">
-                        <span>🌤️</span>
-                        <span>Weather Checker</span>
+                        <span>🔍</span>
+                        <span>Market Intelligence</span>
+                      </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setAgent(RoadmapArchitectAgent)}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span>🗺️</span>
+                        <span>Roadmap Architect</span>
                       </div>
                     </DropdownMenuItem>
                   </DropdownMenuContent>

@@ -10,15 +10,19 @@ export const dynamic = "force-dynamic";
 export default async function Page() {
   const session = await getSession();
   if (!session?.user) {
-    return redirect("/login");
+    return redirect("/sign-in");
   }
 
-  const t = await getTranslations("Info");
   let message: string | undefined;
 
-  if (IS_VERCEL_ENV) {
-    message = t("vercelSyncDelay");
+  try {
+    const t = await getTranslations("Info");
+    if (IS_VERCEL_ENV) {
+      message = t("vercelSyncDelay");
+    }
+  } catch (error) {
+    console.error("Error loading translations on MCP page:", error);
   }
 
-  return <MCPDashboard message={message} user={session?.user} />;
+  return <MCPDashboard message={message} user={session.user} />;
 }

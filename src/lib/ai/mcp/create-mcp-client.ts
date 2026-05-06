@@ -229,9 +229,11 @@ export class MCPClient {
         // We'll allow the transport creation to proceed so it can be saved/managed in the UI,
         // but it will likely fail during actual connection or tool execution.
         if (IS_MCP_SERVER_REMOTE_ONLY) {
-          this.logger.warn(
-            "Stdio transport is being used in a remote-only environment (Vercel). This will likely fail.",
-          );
+          const errorMessage =
+            "VERCEL: Stdio transport is not supported in the Vercel serverless environment. Please use SSE or HTTP transports for remote MCP servers.";
+          this.logger.error(errorMessage);
+          this.error = errorMessage;
+          throw new Error(errorMessage);
         }
 
         const config = MCPStdioConfigZodSchema.parse(processedConfig);

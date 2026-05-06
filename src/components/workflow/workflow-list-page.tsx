@@ -25,7 +25,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "ui/dropdown-menu";
-import { BabyResearch, GetWeather } from "lib/ai/workflow/examples";
+import { ProductRoadmap, UserInterviewAnalyzer } from "lib/ai/workflow/examples";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "ui/dialog";
@@ -188,11 +188,11 @@ export default function WorkflowListPage({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-54">
-              <DropdownMenuItem onClick={() => createExample(BabyResearch())}>
-                👨🏻‍🔬 {t("Workflow.example.babyResearch")}
+              <DropdownMenuItem onClick={() => createExample(ProductRoadmap())}>
+                🗺️ {t("Workflow.example.productRoadmap")}
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => createExample(GetWeather())}>
-                🌤️ {t("Workflow.example.getWeather")}
+              <DropdownMenuItem onClick={() => createExample(UserInterviewAnalyzer())}>
+                🔍 {t("Workflow.example.userInterview")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

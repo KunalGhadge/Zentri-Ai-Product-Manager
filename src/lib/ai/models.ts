@@ -179,7 +179,7 @@ export const getFilePartSupportedMimeTypes = (model: LanguageModel) => {
   return staticFilePartSupportByModel.get(model) ?? [];
 };
 
-const fallbackModel = staticModels.openai["gpt-4.1"];
+const fallbackModel = staticModels.google["gemini-2.5-flash-lite"];
 
 export const customModelProvider = {
   modelsInfo: Object.entries(allModels).map(([provider, models]) => ({

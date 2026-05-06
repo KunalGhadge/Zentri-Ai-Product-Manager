@@ -200,7 +200,8 @@ export async function canCreateAgent(): Promise<boolean> {
     const session = await getSession();
     if (!session?.user) return false;
 
-    return hasPermission(session.user.role, "create", "agent");
+    // All logged in users can create agents
+    return true;
   } catch (error) {
     console.error("Error checking agent create permission:", error);
     return false;
@@ -245,7 +246,8 @@ export async function canCreateWorkflow(): Promise<boolean> {
     const session = await getSession();
     if (!session?.user) return false;
 
-    return hasPermission(session.user.role, "create", "workflow");
+    // All logged in users can create workflows
+    return true;
   } catch (error) {
     console.error("Error checking workflow create permission:", error);
     return false;
@@ -290,7 +292,8 @@ export async function canCreateMCP(): Promise<boolean> {
     const session = await getSession();
     if (!session?.user) return false;
 
-    return hasPermission(session.user.role, "create", "mcp");
+    // All logged in users can create MCP connections
+    return true;
   } catch (error) {
     console.error("Error checking MCP create permission:", error);
     return false;
@@ -385,5 +388,13 @@ export async function canManageMCPServer(
  * Check if user can share MCP servers (admin only)
  */
 export async function canShareMCPServer(): Promise<boolean> {
-  return await hasAdminPermission();
+  try {
+    const session = await getSession();
+    if (!session?.user) return false;
+    
+    // Admins and editors can share/feature MCP servers
+    return session.user.role === "admin" || session.user.role === "editor";
+  } catch (_error) {
+    return false;
+  }
 }

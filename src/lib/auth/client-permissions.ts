@@ -58,8 +58,8 @@ function hasPermission(
 /**
  * Check if user can create agents (client-side)
  */
-export function canCreateAgent(userRoleString?: string | null): boolean {
-  return hasPermission(userRoleString, "create", "agent");
+export function canCreateAgent(_userRoleString?: string | null): boolean {
+  return true; // All logged in users can create agents
 }
 
 /**
@@ -79,8 +79,8 @@ export function canDeleteAgent(userRoleString?: string | null): boolean {
 /**
  * Check if user can create workflows (client-side)
  */
-export function canCreateWorkflow(userRoleString?: string | null): boolean {
-  return hasPermission(userRoleString, "create", "workflow");
+export function canCreateWorkflow(_userRoleString?: string | null): boolean {
+  return true; // All logged in users can create workflows
 }
 
 /**
@@ -100,8 +100,8 @@ export function canDeleteWorkflow(userRoleString?: string | null): boolean {
 /**
  * Check if user can create MCP connections (client-side)
  */
-export function canCreateMCP(userRoleString?: string | null): boolean {
-  return hasPermission(userRoleString, "create", "mcp");
+export function canCreateMCP(_userRoleString?: string | null): boolean {
+  return true; // All logged in users can create MCP connections
 }
 
 /**

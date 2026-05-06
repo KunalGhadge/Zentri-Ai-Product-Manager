@@ -134,8 +134,8 @@
       "soonMessage": "Coming soon."
     },
     "example": {
-      "babyResearch": "Baby Research",
-      "getWeather": "Get Weather"
+      "productRoadmap": "Product Roadmap",
+      "userInterview": "User Research Analyzer"
     },
     "kindsDescription": {
       "input": "Define input parameters that the chatbot will provide when using this workflow as a tool.\n\nSpecify the data structure and validation rules for tool execution.",
