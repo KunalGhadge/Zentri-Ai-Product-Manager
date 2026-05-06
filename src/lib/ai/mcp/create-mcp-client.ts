@@ -8,7 +8,6 @@ import {
   MCPStdioConfigZodSchema,
   type MCPServerConfig,
   type MCPToolInfo,
-  MCP_STDIO_TRANSPORT_TYPE,
 } from "app-types/mcp";
 
 import { isMaybeRemoteConfig, isMaybeStdioConfig } from "./is-mcp-config";
@@ -85,7 +84,9 @@ export class MCPClient {
       (_, varName) => {
         const value = process.env[varName];
         if (value) return value;
-        this.logger.warn(`Environment variable ${varName} not found for MCP config`);
+        this.logger.warn(
+          `Environment variable ${varName} not found for MCP config`,
+        );
         return `\${${varName}}`;
       },
     );
