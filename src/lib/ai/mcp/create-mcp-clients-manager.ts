@@ -186,33 +186,6 @@ export class MCPClientsManager {
     );
   }
   /**
-   * Creates a client with cached tool info but does NOT connect.
-   * The connection will happen lazily when a tool is actually called.
-   */
-  private addClientWithCachedToolInfo(
-    id: string,
-    name: string,
-    serverConfig: MCPServerConfig,
-    cachedToolInfo: MCPToolInfo[],
-  ) {
-    if (this.clients.has(id)) {
-      const prevClient = this.clients.get(id)!;
-      void prevClient.client.disconnect();
-    }
-    const client = createMCPClient(id, name, serverConfig, {
-      autoDisconnectSeconds: this.autoDisconnectSeconds,
-      initialToolInfo: cachedToolInfo,
-      onToolInfoUpdate: (toolInfo) => {
-        this.storage?.updateToolInfo?.(id, toolInfo);
-      },
-      onConnectionStatusChange: (status) => {
-        this.storage?.updateConnectionStatus?.(id, status);
-      },
-    });
-    this.clients.set(id, { client, name });
-  }
-
-  /**
    * Adds a client to memory with cached tool info, without initiating connection.
    */
   addClientWithCachedToolInfo(
