@@ -68,6 +68,15 @@ export async function POST(request: Request) {
     if (!session?.user.id) {
       return new Response("Unauthorized", { status: 401 });
     }
+    const body = chatApiSchemaRequestBodySchema.safeParse(json);
+    if (!body.success) {
+      logger.error("Invalid request body", body.error);
+      return Response.json(
+        { message: "Invalid request body", error: body.error },
+        { status: 400 },
+      );
+    }
+
     const {
       id,
       message,
@@ -78,9 +87,16 @@ export async function POST(request: Request) {
       imageTool,
       mentions = [],
       attachments = [],
-    } = chatApiSchemaRequestBodySchema.parse(json);
+    } = body.data;
 
     const model = customModelProvider.getModel(chatModel);
+
+    // Validate UUID to prevent database errors
+    const uuidSchema = z.string().uuid();
+    if (!uuidSchema.safeParse(id).success) {
+      logger.error("Invalid UUID for thread ID", id);
+      return Response.json({ message: "Invalid thread ID" }, { status: 400 });
+    }
 
     let thread = await chatRepository.selectThreadDetails(id);
 

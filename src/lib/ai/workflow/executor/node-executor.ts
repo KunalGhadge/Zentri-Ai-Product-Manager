@@ -127,7 +127,9 @@ export const llmNodeExecutor: NodeExecutor<LLMNodeData> = async ({
   const response = await generateObject({
     model,
     messages: convertToModelMessages(messages),
-    schema: jsonSchemaToZod(node.outputSchema.properties.answer),
+    schema: jsonSchemaToZod(
+      (node.outputSchema.properties?.answer as any) || node.outputSchema,
+    ),
     maxRetries: 3,
   });
 

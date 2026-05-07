@@ -429,7 +429,7 @@ Your support helps maintain and improve this project. Thank you! 🙏
 
 We welcome all contributions! Bug reports, feature ideas, code improvements — everything helps us build the best local AI assistant.
 
-> **⚠️ Please read our [Contributing Guide](./CONTRIBUTING.md) before submitting any Pull Requests or Issues.** This helps us work together more effectively and saves time for everyone.
+Please read our [Contributing Guide](./CONTRIBUTING.md) before submitting any Pull Requests or Issues. This helps us work together more effectively and saves time for everyone.
 
 **For detailed contribution guidelines**, please see our [Contributing Guide](./CONTRIBUTING.md).
 

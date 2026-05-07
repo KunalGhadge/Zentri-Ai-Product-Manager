@@ -40,9 +40,14 @@ export const userInterviewNodes: Partial<DBNode>[] = [
       outputSchema: {
         type: "object",
         properties: {
-          painPoints: { type: "array", items: { type: "string" } },
-          featureRequests: { type: "array", items: { type: "string" } },
-          sentiment: { type: "string" },
+          answer: {
+            type: "object",
+            properties: {
+              painPoints: { type: "array", items: { type: "string" } },
+              featureRequests: { type: "array", items: { type: "string" } },
+              sentiment: { type: "string" },
+            },
+          },
         },
       },
       messages: [
@@ -106,11 +111,11 @@ export const userInterviewNodes: Partial<DBNode>[] = [
       outputData: [
         {
           key: "painPoints",
-          source: { nodeId: LLM_ID, path: ["painPoints"] },
+          source: { nodeId: LLM_ID, path: ["answer", "painPoints"] },
         },
         {
           key: "featureRequests",
-          source: { nodeId: LLM_ID, path: ["featureRequests"] },
+          source: { nodeId: LLM_ID, path: ["answer", "featureRequests"] },
         },
       ],
     },

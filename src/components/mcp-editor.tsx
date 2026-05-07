@@ -175,12 +175,73 @@ export default function MCPEditor({
     }
   };
 
+  const [smitheryCommand, setSmitheryCommand] = useState("");
+
+  const handleSmitheryPaste = (cmd: string) => {
+    setSmitheryCommand(cmd);
+    if (!cmd.trim()) return;
+
+    // Parse npx command
+    // Example: npx -y @modelcontextprotocol/server-github
+    const parts = cmd.split(" ").filter((p) => p.trim() !== "");
+    if (parts[0] === "npx") {
+      const args = parts.slice(1).filter((p) => p !== "-y");
+      const newConfig = {
+        command: "npx",
+        args: args,
+      };
+      setConfig(newConfig);
+      setJsonString(JSON.stringify(newConfig, null, 2));
+      toast.success(t("MCP.smitheryConfigParsed"));
+    }
+  };
+
   return (
     <>
       <div className="flex flex-col space-y-6">
+        <Alert className="bg-secondary/20 border-blue-500/50">
+          <AlertTitle className="flex items-center gap-2 text-blue-500">
+            <MCPIcon className="size-4 fill-blue-500" />
+            {t("MCP.howToAddFromServer")}
+          </AlertTitle>
+          <AlertDescription className="text-xs space-y-2">
+            <p>{t("MCP.smitheryHelpDescription")}</p>
+            <ul className="list-disc pl-4 space-y-1">
+              <li>
+                <strong>{t("MCP.localServers")}</strong>:{" "}
+                {t("MCP.localServersHelp")}
+              </li>
+              <li>
+                <strong>{t("MCP.remoteServers")}</strong>:{" "}
+                {t("MCP.remoteServersHelp")}
+              </li>
+            </ul>
+          </AlertDescription>
+        </Alert>
+
+        {/* Smithery Helper */}
+        <div className="space-y-2 border p-4 rounded-lg bg-secondary/10 border-dashed">
+          <Label
+            htmlFor="smithery-helper"
+            className="text-sm font-semibold flex items-center gap-2"
+          >
+            🚀 {t("MCP.smitheryHelperTitle")}
+          </Label>
+          <p className="text-xs text-muted-foreground">
+            {t("MCP.smitheryHelperDescription")}
+          </p>
+          <Input
+            id="smithery-helper"
+            value={smitheryCommand}
+            onChange={(e) => handleSmitheryPaste(e.target.value)}
+            placeholder="npx -y @modelcontextprotocol/server-github"
+            className="font-mono text-xs"
+          />
+        </div>
+
         {/* Name field */}
         <div className="space-y-2">
-          <Label htmlFor="name">Name</Label>
+          <Label htmlFor="name">{t("MCP.name")}</Label>
 
           <Input
             id="name"

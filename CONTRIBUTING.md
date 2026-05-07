@@ -98,7 +98,7 @@ We use [Release Please](https://github.com/googleapis/release-please) to automat
 - `feat: support multi-language UI toggle`
 - `chore: update dependencies`
 
-### ⚠️ Important Notes
+### Pull Request Rules
 
 - PR **titles must start** with one of the following prefixes:
 

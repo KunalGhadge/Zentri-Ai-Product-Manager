@@ -220,7 +220,13 @@ export async function rememberAgentAction(
   const key = CacheKeys.agentInstructions(agent);
   let cachedAgent = await serverCache.get<Agent | null>(key);
   if (!cachedAgent) {
-    cachedAgent = await agentRepository.selectAgentById(agent, userId);
+    const uuidSchema = z.string().uuid();
+    if (uuidSchema.safeParse(agent).success) {
+      cachedAgent = await agentRepository.selectAgentById(agent, userId);
+    } else {
+      logger.warn("Invalid agent ID format", agent);
+      cachedAgent = null;
+    }
     await serverCache.set(key, cachedAgent);
   }
   return cachedAgent as Agent | undefined;

@@ -45,14 +45,22 @@ export const productRoadmapNodes: Partial<DBNode>[] = [
       outputSchema: {
         type: "object",
         properties: {
-          roadmap: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                phase: { type: "string" },
-                milestones: { type: "array", items: { type: "string" } },
-                priority: { type: "string", enum: ["High", "Medium", "Low"] },
+          answer: {
+            type: "object",
+            properties: {
+              roadmap: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    phase: { type: "string" },
+                    milestones: { type: "array", items: { type: "string" } },
+                    priority: {
+                      type: "string",
+                      enum: ["High", "Medium", "Low"],
+                    },
+                  },
+                },
               },
             },
           },
@@ -152,7 +160,7 @@ This workflow helps PMs transform a raw product vision into a structured, phase-
       outputData: [
         {
           key: "roadmap",
-          source: { nodeId: LLM_ID, path: ["roadmap"] },
+          source: { nodeId: LLM_ID, path: ["answer", "roadmap"] },
         },
       ],
     },
