@@ -204,13 +204,18 @@ export async function generateObjectAction({
   };
   schema: JSONSchema7 | ObjectJsonSchema7;
 }) {
-  const result = await generateObject({
-    model: customModelProvider.getModel(model),
-    system: prompt.system,
-    prompt: prompt.user || "",
-    schema: jsonSchemaToZod(schema),
-  });
-  return result.object;
+  try {
+    const result = await generateObject({
+      model: customModelProvider.getModel(model),
+      system: prompt.system,
+      prompt: prompt.user || "",
+      schema: jsonSchemaToZod(schema),
+    });
+    return result.object;
+  } catch (error: any) {
+    logger.error("generateObjectAction failed:", error);
+    throw new Error(error.message || "Failed to generate object with AI");
+  }
 }
 
 export async function rememberAgentAction(

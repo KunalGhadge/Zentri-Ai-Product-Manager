@@ -143,7 +143,7 @@ ${workflow!.description ? `tool-description: ${workflow!.description}` : ""}`,
       {
         loading: t("Common.generatingInputWithAI"),
         success: t("Common.inputGeneratedSuccessfully"),
-        error: t("Common.failedToGenerateInput"),
+        error: (err: any) => err.message || t("Common.failedToGenerateInput"),
       },
     );
   }, [inputSchema]);
