@@ -60,11 +60,14 @@ export const productRoadmapNodes: Partial<DBNode>[] = [
                       enum: ["High", "Medium", "Low"],
                     },
                   },
+                  required: ["phase", "milestones", "priority"],
                 },
               },
             },
+            required: ["roadmap"],
           },
         },
+        required: ["answer"],
       },
       messages: [
         {

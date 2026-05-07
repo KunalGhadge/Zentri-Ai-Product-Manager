@@ -7,7 +7,11 @@ import { JSONSchema7 } from "json-schema";
  * @param jsonSchema - The JSON Schema object to convert
  * @returns A Zod schema
  */
-export function jsonSchemaToZod(jsonSchema: JSONSchema7): z.ZodType<any> {
+export function jsonSchemaToZod(jsonSchema: JSONSchema7 | undefined): z.ZodType<any> {
+  if (!jsonSchema) {
+    return z.unknown();
+  }
+
   // Handle enum
   if (jsonSchema.enum) {
     if (jsonSchema.enum.length === 0) {

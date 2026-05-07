@@ -47,8 +47,10 @@ export const userInterviewNodes: Partial<DBNode>[] = [
               featureRequests: { type: "array", items: { type: "string" } },
               sentiment: { type: "string" },
             },
+            required: ["painPoints", "featureRequests", "sentiment"],
           },
         },
+        required: ["answer"],
       },
       messages: [
         {
