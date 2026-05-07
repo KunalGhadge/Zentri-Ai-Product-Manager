@@ -28,6 +28,7 @@ import {
   ChatMention,
   ChatMetadata,
 } from "app-types/chat";
+import { z } from "zod";
 
 import { errorIf, safe } from "ts-safe";
 
