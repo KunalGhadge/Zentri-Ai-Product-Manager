@@ -22,7 +22,15 @@ async function runCommand(command: string, description: string) {
     console.log(`${description} finished successfully.`);
   } catch (error: any) {
     console.error(`${description} error:`, error);
-    process.exit(1);
+    // Soft fail for Vercel database migrations to prevent deployment blockages
+    if (command === "pnpm db:migrate" && IS_VERCEL_ENV) {
+      console.warn(
+        "⚠️ Database migration failed during build, likely due to connection limits. " +
+        "The build will proceed, but you may need to apply migrations manually.",
+      );
+    } else {
+      process.exit(1);
+    }
   }
 }
 
