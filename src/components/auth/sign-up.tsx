@@ -60,7 +60,7 @@ export default function SignUpPage({
             {t("Auth.SignUp.email")}
           </Link>
         )}
-        {socialAuthenticationProviders.length > 0 && (
+        {/* socialAuthenticationProviders.length > 0 && (
           <>
             {emailAndPasswordEnabled && (
               <div className="flex items-center my-4">
@@ -76,7 +76,7 @@ export default function SignUpPage({
               onSocialProviderClick={handleSocialSignIn}
             />
           </>
-        )}
+        ) */}
       </CardContent>
     </Card>
   );

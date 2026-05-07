@@ -129,7 +129,7 @@ export default function SignIn({
               </Button>
             </div>
           )}
-          {socialAuthenticationProviders.length > 0 && (
+          {/* socialAuthenticationProviders.length > 0 && (
             <>
               {emailAndPasswordEnabled && (
                 <div className="flex items-center my-4">
@@ -173,7 +173,7 @@ export default function SignIn({
                 )}
               </div>
             </>
-          )}
+          ) */}
           {signUpEnabled && (
             <div className="my-8 text-center text-sm text-muted-foreground">
               {t("noAccount")}
