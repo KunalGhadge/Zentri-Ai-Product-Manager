@@ -27,7 +27,7 @@ import { SocialAuthenticationProvider } from "app-types/authentication";
 export default function SignIn({
   emailAndPasswordEnabled,
   signUpEnabled,
-  socialAuthenticationProviders,
+  socialAuthenticationProviders: _socialAuthenticationProviders,
   isFirstUser,
 }: {
   emailAndPasswordEnabled: boolean;

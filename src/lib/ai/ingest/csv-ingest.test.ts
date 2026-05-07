@@ -31,8 +31,8 @@ describe("buildCsvIngestionPreviewParts", () => {
   it("skips attachments that are not csv-like", async () => {
     const attachments = [
       attachmentFactory({
-        mediaType: "application/json",
-        filename: "data.json",
+        mediaType: "audio/mpeg",
+        filename: "audio.mp3",
       }),
     ];
     const download = vi.fn();

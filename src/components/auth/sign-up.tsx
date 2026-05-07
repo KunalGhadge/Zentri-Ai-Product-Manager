@@ -20,7 +20,7 @@ import { Mail } from "lucide-react";
 
 export default function SignUpPage({
   emailAndPasswordEnabled,
-  socialAuthenticationProviders,
+  socialAuthenticationProviders: _socialAuthenticationProviders,
   isFirstUser,
 }: {
   emailAndPasswordEnabled: boolean;

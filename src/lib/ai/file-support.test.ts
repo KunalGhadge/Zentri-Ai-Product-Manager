@@ -21,7 +21,7 @@ describe("file-support", () => {
   });
 
   it("returns false for unsupported mime types by default", () => {
-    expect(isFilePartSupported("text/plain")).toBe(false);
+    expect(isFilePartSupported("video/mp4")).toBe(false);
     expect(isFilePartSupported("application/vnd.ms-excel")).toBe(false);
   });
 

@@ -362,18 +362,15 @@ describe("MCPClientsManager", () => {
       );
     });
 
-    it("should throw error for non-existent client", async () => {
-      await expect(manager.refreshClient("non-existent")).rejects.toThrow(
-        "Client non-existent not found",
-      );
+    it("should return null for non-existent client", async () => {
+      vi.mocked(mockStorage.get).mockResolvedValue(null);
+      await expect(manager.refreshClient("non-existent")).resolves.toBeNull();
     });
 
     it("should throw error when storage client not found", async () => {
       vi.mocked(mockStorage.get).mockResolvedValue(null);
 
-      await expect(manager.refreshClient("test-server")).rejects.toThrow(
-        "Client test-server not found",
-      );
+      await expect(manager.refreshClient("test-server")).resolves.toBeNull();
     });
   });
 
