@@ -34,24 +34,52 @@ export async function POST(req: Request) {
     /\.(csv)$/i.test(key) ||
     /(^|[?&])contentType=text\/csv(&|$)/i.test(body.url || "");
 
-  if (!isCsv) {
+  const isTextBased =
+    isCsv ||
+    /\.(txt|md|json)$/i.test(key) ||
+    /(^|[?&])contentType=(text\/plain|text\/markdown|application\/json)(&|$)/i.test(
+      body.url || "",
+    );
+
+  if (!isTextBased) {
     return NextResponse.json(
       {
         error: "Unsupported file type for ingest",
         solution:
-          "Currently supported: CSV. Convert your spreadsheet to CSV or paste sample rows.",
+          "Currently supported: CSV, TXT, MD, JSON. Convert your file to one of these formats.",
       },
       { status: 400 },
     );
   }
 
   const buf = await serverFileStorage.download(key);
-  const preview = parseCsvPreview(buf, {
-    maxRows: Math.min(200, Math.max(1, body.maxRows ?? 50)),
-    maxCols: Math.min(40, Math.max(1, body.maxCols ?? 12)),
+
+  if (isCsv) {
+    const preview = parseCsvPreview(buf, {
+      maxRows: Math.min(200, Math.max(1, body.maxRows ?? 50)),
+      maxCols: Math.min(40, Math.max(1, body.maxCols ?? 12)),
+    });
+
+    const text = formatCsvPreviewText(key, preview);
+    return NextResponse.json({ ok: true, type: "csv", key, preview, text });
+  }
+
+  // Handle generic text files (TXT, MD, JSON)
+  const textContent = buf.toString("utf-8");
+  // Limit to reasonable size to prevent massive prompts (e.g. ~50k chars)
+  const truncatedText =
+    textContent.length > 50000
+      ? textContent.slice(0, 50000) + "\n...[Content truncated due to length]"
+      : textContent;
+
+  const fileName = key.split("/").pop() || "file.txt";
+  const formattedText = `File: ${fileName}\n\n${truncatedText}`;
+
+  return NextResponse.json({
+    ok: true,
+    type: "text",
+    key,
+    text: formattedText,
   });
-
-  const text = formatCsvPreviewText(key, preview);
-
-  return NextResponse.json({ ok: true, type: "csv", key, preview, text });
 }
+

@@ -3,8 +3,11 @@ export const DEFAULT_FILE_PART_MIME_TYPES = [
   "image/png",
   "image/webp",
   "image/gif",
-  // Enable PDF when supported by the chosen model/provider
   "application/pdf",
+  "text/plain",
+  "text/markdown",
+  "text/csv",
+  "application/json",
 ] as const;
 
 export const OPENAI_FILE_MIME_TYPES = [
@@ -28,6 +31,9 @@ const DEFAULT_FILE_PART_MIME_SET = new Set<string>(
 export const INGEST_SUPPORTED_MIME = new Set<string>([
   "text/csv",
   "application/csv",
+  "application/json",
+  "text/plain",
+  "text/markdown",
   // Future: xlsx when server-side parser is added
   // "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 ]);
