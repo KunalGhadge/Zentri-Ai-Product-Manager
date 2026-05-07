@@ -229,11 +229,10 @@ export class MCPClient {
         // We'll allow the transport creation to proceed so it can be saved/managed in the UI,
         // but it will likely fail during actual connection or tool execution.
         if (IS_MCP_SERVER_REMOTE_ONLY) {
-          const errorMessage =
-            "VERCEL: Stdio transport is not supported in the Vercel serverless environment. Please use SSE or HTTP transports for remote MCP servers.";
-          this.logger.error(errorMessage);
-          this.error = errorMessage;
-          throw new Error(errorMessage);
+          const warning = `VERCEL: Stdio transport is not supported in the Vercel serverless environment. Proceeding without throwing to allow graceful fallback.`;
+          this.logger.warn(warning);
+          this.error = warning;
+          // Do not throw – let the later connection attempt fail gracefully.
         }
 
         const config = MCPStdioConfigZodSchema.parse(processedConfig);
