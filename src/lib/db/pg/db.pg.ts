@@ -1,11 +1,11 @@
-// import { Logger } from "drizzle-orm";
-import { drizzle as drizzlePg } from "drizzle-orm/node-postgres";
+import { drizzle } from "drizzle-orm/node-postgres";
+import pg from "pg";
 
-// class MyLogger implements Logger {
-//   logQuery(query: string, params: unknown[]): void {
-//     console.log({ query, params });
-//   }
-// }
-export const pgDb = drizzlePg(process.env.POSTGRES_URL!, {
-  //   logger: new MyLogger(),
+const pool = new pg.Pool({
+  connectionString: process.env.POSTGRES_URL,
+  max: 10, // Limit connections for Neon/session mode
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000,
 });
+
+export const pgDb = drizzle(pool);

@@ -107,7 +107,12 @@ export async function saveMcpClientAction(
 }
 
 export async function existMcpClientByServerNameAction(serverName: string) {
-  return await mcpRepository.existsByServerName(serverName);
+  try {
+    return await mcpRepository.existsByServerName(serverName);
+  } catch (error) {
+    console.error(`Failed to check if MCP server exists: ${serverName}`, error);
+    return false; // Assume it doesn't exist or just let the save fail later
+  }
 }
 
 export async function removeMcpClientAction(id: string) {
