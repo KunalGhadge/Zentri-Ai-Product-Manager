@@ -12,11 +12,11 @@ import {
 import { cn } from "lib/utils";
 import { useTranslations } from "next-intl";
 import { SocialAuthenticationProvider } from "app-types/authentication";
-import SocialProviders from "./social-providers";
+// import SocialProviders from "./social-providers";
 import { Mail } from "lucide-react";
-import { authClient } from "auth/client";
-import { toast } from "sonner";
-import { startTransition } from "react";
+// import { authClient } from "auth/client";
+// import { toast } from "sonner";
+// import { startTransition } from "react";
 
 export default function SignUpPage({
   emailAndPasswordEnabled,
@@ -28,7 +28,7 @@ export default function SignUpPage({
   isFirstUser: boolean;
 }) {
   const t = useTranslations();
-  const handleSocialSignIn = (provider: SocialAuthenticationProvider) => {
+  /* const handleSocialSignIn = (provider: SocialAuthenticationProvider) => {
     startTransition(async () => {
       try {
         await authClient.signIn.social({ provider });
@@ -36,7 +36,7 @@ export default function SignUpPage({
         toast.error(e instanceof Error ? e.message : "Unknown error");
       }
     });
-  };
+  }; */
   return (
     <Card className="w-full md:max-w-md bg-background border-none mx-auto shadow-none">
       <CardHeader>

@@ -18,10 +18,10 @@ import { Loader } from "lucide-react";
 import { safe } from "ts-safe";
 import { authClient } from "auth/client";
 import { toast } from "sonner";
-import { GithubIcon } from "ui/github-icon";
-import { GoogleIcon } from "ui/google-icon";
+// import { GithubIcon } from "ui/github-icon";
+// import { GoogleIcon } from "ui/google-icon";
 import { useTranslations } from "next-intl";
-import { MicrosoftIcon } from "ui/microsoft-icon";
+// import { MicrosoftIcon } from "ui/microsoft-icon";
 import { SocialAuthenticationProvider } from "app-types/authentication";
 
 export default function SignIn({
@@ -64,11 +64,11 @@ export default function SignIn({
       .unwrap();
   };
 
-  const handleSocialSignIn = (provider: SocialAuthenticationProvider) => {
+  /* const handleSocialSignIn = (provider: SocialAuthenticationProvider) => {
     authClient.signIn.social({ provider }).catch((e) => {
       toast.error(e.error);
     });
-  };
+  }; */
   return (
     <div className="w-full h-full flex flex-col p-4 md:p-8 justify-center">
       <Card className="w-full md:max-w-md bg-background border-none mx-auto shadow-none animate-in fade-in duration-1000">
