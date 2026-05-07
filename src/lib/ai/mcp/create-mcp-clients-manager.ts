@@ -284,11 +284,12 @@ export class MCPClientsManager {
     await this.waitInitialized();
     const server = await this.storage.get(id);
     if (!server) {
-      throw new Error(`Client ${id} not found`);
+      this.logger.warn(`Client ${id} not found in storage during refresh`);
+      return null;
     }
     this.logger.info(`Refreshing client ${server.name}`);
     await this.addClient(id, server.name, server.config);
-    return this.clients.get(id)!;
+    return this.clients.get(id) || null;
   }
 
   async cleanup() {
@@ -308,10 +309,10 @@ export class MCPClientsManager {
     await this.waitInitialized();
     const client = this.clients.get(id);
     if (!client) {
-      await this.refreshClient(id);
+      return await this.refreshClient(id);
     }
 
-    return this.clients.get(id);
+    return this.clients.get(id) || null;
   }
   async toolCallByServerName(
     serverName: string,
