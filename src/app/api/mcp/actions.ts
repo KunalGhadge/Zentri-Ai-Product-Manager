@@ -103,7 +103,11 @@ export async function saveMcpClientAction(
     visibility: server.visibility || "private",
   };
 
-  return mcpClientsManager.persistClient(serverWithUser);
+  const client = await mcpClientsManager.persistClient(serverWithUser);
+  return {
+    ...client.client.getInfo(),
+    id: client.client.getInfo().id,
+  };
 }
 
 export async function existMcpClientByServerNameAction(serverName: string) {

@@ -46,7 +46,7 @@ const MCP_MAX_TOTAL_TIMEOUT = process.env.MCP_MAX_TOTAL_TIMEOUT
  */
 export class MCPClient {
   private client?: Client;
-  private error?: unknown;
+  private error?: string;
   private authorizationUrl?: URL;
   protected isConnected = false;
   private logger: ConsolaInstance;
@@ -340,7 +340,7 @@ export class MCPClient {
       this.error = errorToString(error);
       this.transport = undefined;
       this.options.onConnectionStatusChange?.("error");
-      throw new Error(this.error);
+      throw new Error(this.error || "Unknown connection error");
     } finally {
       this.locker.unlock();
     }

@@ -25,7 +25,7 @@ export async function POST(request: Request) {
   try {
     const result = await saveMcpClientAction(json);
 
-    return NextResponse.json({ success: true, id: result.client.getInfo().id });
+    return NextResponse.json({ success: true, id: result.id });
   } catch (error: any) {
     logger.error("Failed to save MCP client", { error });
     return NextResponse.json(
