@@ -2,6 +2,7 @@ import type {
   MCPServerConfig,
   MCPRemoteConfig,
   MCPStdioConfig,
+  SmitheryHttpConfig,
 } from "app-types/mcp";
 
 /**
@@ -27,10 +28,26 @@ export function isMaybeRemoteConfig(
 }
 
 /**
- * Type guard for MCP server config (either stdio or remote)
+ * Type guard for Smithery HTTP config
+ */
+export function isSmitheryHttpConfig(
+  config: unknown,
+): config is SmitheryHttpConfig {
+  if (typeof config !== "object" || config === null) {
+    return false;
+  }
+  return "type" in config && (config as any).type === "smithery-http";
+}
+
+/**
+ * Type guard for MCP server config (stdio, remote, or smithery-http)
  */
 export function isMaybeMCPServerConfig(
   config: unknown,
 ): config is MCPServerConfig {
-  return isMaybeStdioConfig(config) || isMaybeRemoteConfig(config);
+  return (
+    isMaybeStdioConfig(config) ||
+    isMaybeRemoteConfig(config) ||
+    isSmitheryHttpConfig(config)
+  );
 }

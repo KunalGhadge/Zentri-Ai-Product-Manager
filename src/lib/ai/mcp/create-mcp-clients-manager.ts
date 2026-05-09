@@ -18,7 +18,7 @@ import {
 import { safe } from "ts-safe";
 import { McpServerTable } from "lib/db/pg/schema.pg";
 import { createMCPToolId } from "./mcp-tool-id";
-import { isMaybeRemoteConfig } from "./is-mcp-config";
+import { isMaybeRemoteConfig, isSmitheryHttpConfig } from "./is-mcp-config";
 import globalLogger from "logger";
 import { jsonSchema, ToolCallOptions } from "ai";
 import { createMemoryMCPConfigStorage } from "./memory-mcp-config-storage";
@@ -121,7 +121,8 @@ export class MCPClientsManager {
                 // On Vercel, we skip background connect for non-remote servers to keep cold starts fast
                 if (
                   process.env.VERCEL === "1" &&
-                  !isMaybeRemoteConfig(config)
+                  !isMaybeRemoteConfig(config) &&
+                  !isSmitheryHttpConfig(config)
                 ) {
                   this.addClientWithCachedToolInfo(
                     id,
@@ -251,7 +252,11 @@ export class MCPClientsManager {
 
     // On Vercel, we skip the immediate connection during persistence for non-remote servers to avoid timeouts.
     // The connection for remote servers is safe and required for tool discovery.
-    if (process.env.VERCEL === "1" && !isMaybeRemoteConfig(server.config)) {
+    if (
+      process.env.VERCEL === "1" &&
+      !isMaybeRemoteConfig(server.config) &&
+      !isSmitheryHttpConfig(server.config)
+    ) {
       this.logger.info(
         `Vercel: Skipping connection for Stdio server ${server.name}, preserving ${cachedTools.length} tools`,
       );

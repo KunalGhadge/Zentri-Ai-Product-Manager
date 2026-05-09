@@ -10,7 +10,11 @@ import {
   type MCPToolInfo,
 } from "app-types/mcp";
 
-import { isMaybeRemoteConfig, isMaybeStdioConfig } from "./is-mcp-config";
+import {
+  isMaybeRemoteConfig,
+  isMaybeStdioConfig,
+  isSmitheryHttpConfig,
+} from "./is-mcp-config";
 import logger from "logger";
 import type { ConsolaInstance } from "consola";
 import { colorize } from "consola/utils";
@@ -328,6 +332,32 @@ export class MCPClient {
             }
           }
         }
+      } else if (isSmitheryHttpConfig(processedConfig)) {
+        // Smithery HTTP Gateway mode
+        // Legacy MCP JSON-RPC is bypassed for modern hosted HTTP integrations.
+        this.logger.info(`Connecting to Smithery HTTP Gateway: ${processedConfig.namespace}/${processedConfig.connectionId}`);
+        
+        const response = await fetch(
+          `https://smithery.run/${processedConfig.namespace}/${processedConfig.connectionId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: processedConfig.apiKey ? `Bearer ${processedConfig.apiKey}` : "",
+            },
+            body: JSON.stringify({
+              mcpUrl: processedConfig.mcpUrl,
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Smithery connection failed: ${response.status} ${errorText}`);
+        }
+
+        this.isConnected = true;
+        this.scheduleAutoDisconnect();
       } else {
         throw new Error("Invalid server config");
       }
@@ -375,6 +405,57 @@ export class MCPClient {
     void client?.close?.().catch((e) => this.logger.error(e));
   }
   async updateToolInfo() {
+    const processedConfig = this.getProcessedConfig();
+    
+    if (isSmitheryHttpConfig(processedConfig) && this.isConnected) {
+      this.logger.info(`Updating tool info for Smithery HTTP ${this.name}`);
+      try {
+        const response = await fetch(
+          `https://smithery.run/${processedConfig.namespace}/${processedConfig.connectionId}/.tools`,
+          {
+            headers: {
+              Authorization: processedConfig.apiKey ? `Bearer ${processedConfig.apiKey}` : "",
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch Smithery tools: ${response.status}`);
+        }
+
+        const rawResponse = await response.json();
+        this.logger.debug(`Smithery discovery payload for ${this.name}:`, {
+          type: typeof rawResponse,
+          keys: rawResponse && typeof rawResponse === "object" ? Object.keys(rawResponse) : [],
+          isArray: Array.isArray(rawResponse),
+        });
+
+        // Normalize: Smithery/MCP often wraps tools in a 'tools' property
+        const toolsArray = Array.isArray(rawResponse) 
+          ? rawResponse 
+          : (rawResponse?.tools && Array.isArray(rawResponse.tools))
+            ? rawResponse.tools
+            : [];
+
+        this.toolInfo = toolsArray.map(
+          (tool: any) =>
+            ({
+              name: tool.name,
+              description: tool.description,
+              inputSchema: tool.inputSchema,
+            }) as MCPToolInfo,
+        );
+        this.logger.info(
+          `Successfully discovered ${this.toolInfo.length} tools via Smithery HTTP`,
+        );
+        this.options.onToolInfoUpdate?.(this.toolInfo);
+        return;
+      } catch (error) {
+        this.logger.error(`Failed to list Smithery tools:`, error);
+        return;
+      }
+    }
+
     if (this.status === "connected" && this.client) {
       this.logger.info(`Updating tool info for ${this.name}`);
       try {
@@ -406,6 +487,48 @@ export class MCPClient {
     const id = generateUUID();
     this.inProgressToolCallIds.push(id);
     const execute = async () => {
+      const processedConfig = this.getProcessedConfig();
+      
+      if (isSmitheryHttpConfig(processedConfig)) {
+        await this.connect();
+        
+        this.logger.info(`Executing tool ${toolName} via Smithery HTTP Gateway`);
+        const response = await fetch(
+          `https://smithery.run/${processedConfig.namespace}/${processedConfig.connectionId}/.tools/${toolName}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: processedConfig.apiKey ? `Bearer ${processedConfig.apiKey}` : "",
+            },
+            body: JSON.stringify(input),
+          }
+        );
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Smithery tool execution failed: ${response.status} ${errorText}`);
+        }
+
+        const rawResult = await response.json();
+        this.logger.debug(`Smithery execution payload for ${toolName}:`, {
+          type: typeof rawResult,
+          keys: rawResult && typeof rawResult === "object" ? Object.keys(rawResult) : [],
+          hasContent: rawResult && "content" in rawResult,
+        });
+
+        // Normalize: Ensure the response follows the CallToolResult shape { content: [...], isError: boolean }
+        if (rawResult && Array.isArray(rawResult.content)) {
+          return rawResult;
+        }
+
+        // If it's a direct array of content or just a string, wrap it
+        return {
+          content: Array.isArray(rawResult) ? rawResult : [{ type: "text", text: JSON.stringify(rawResult) }],
+          isError: false
+        };
+      }
+
       const client = await this.connect();
       if (this.status === "authorizing") {
         throw new Error("OAuth authorization required. Try Refresh MCP Client");

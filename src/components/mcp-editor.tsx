@@ -4,6 +4,7 @@ import {
   MCPServerConfig,
   MCPRemoteConfigZodSchema,
   MCPStdioConfigZodSchema,
+  SmitheryHttpConfigZodSchema,
 } from "app-types/mcp";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
@@ -20,6 +21,7 @@ import { Loader } from "lucide-react";
 import {
   isMaybeMCPServerConfig,
   isMaybeRemoteConfig,
+  isSmitheryHttpConfig,
 } from "lib/ai/mcp/is-mcp-config";
 
 import { Alert, AlertDescription, AlertTitle } from "ui/alert";
@@ -49,7 +51,17 @@ const STDIO_ARGS_ENV_PLACEHOLDER = `/** STDIO Example */
   "headers": {
     "Authorization": "Bearer sk-..."
   }
-}`;
+}
+
+/** Smithery HTTP Hosted Gateway Example */
+{
+  "type": "smithery-http",
+  "namespace": "your-namespace",
+  "connectionId": "your-connection-id",
+  "mcpUrl": "https://server.smithery.ai/...",
+  "apiKey": "your-smithery-api-key"
+}
+`;
 
 export default function MCPEditor({
   initialConfig,
@@ -104,9 +116,15 @@ export default function MCPEditor({
 
   // Validate
   const validateConfig = (jsonConfig: unknown): boolean => {
-    const result = isMaybeRemoteConfig(jsonConfig)
-      ? MCPRemoteConfigZodSchema.safeParse(jsonConfig)
-      : MCPStdioConfigZodSchema.safeParse(jsonConfig);
+    let result;
+    if (isSmitheryHttpConfig(jsonConfig)) {
+      result = SmitheryHttpConfigZodSchema.safeParse(jsonConfig);
+    } else if (isMaybeRemoteConfig(jsonConfig)) {
+      result = MCPRemoteConfigZodSchema.safeParse(jsonConfig);
+    } else {
+      result = MCPStdioConfigZodSchema.safeParse(jsonConfig);
+    }
+
     if (!result.success) {
       handleErrorWithToast(result.error, "mcp-editor-error");
     }

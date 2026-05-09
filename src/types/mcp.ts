@@ -27,7 +27,20 @@ export type AllowedMCPServer = z.infer<typeof AllowedMCPServerZodSchema>;
 export type MCPRemoteConfig = z.infer<typeof MCPRemoteConfigZodSchema>;
 export type MCPStdioConfig = z.infer<typeof MCPStdioConfigZodSchema>;
 
-export type MCPServerConfig = MCPRemoteConfig | MCPStdioConfig;
+export const SmitheryHttpConfigZodSchema = z.object({
+  type: z.literal("smithery-http"),
+  namespace: z.string().min(1),
+  connectionId: z.string().min(1),
+  mcpUrl: z.string().url(),
+  apiKey: z.string().optional(),
+});
+
+export type SmitheryHttpConfig = z.infer<typeof SmitheryHttpConfigZodSchema>;
+
+export type MCPServerConfig =
+  | MCPRemoteConfig
+  | MCPStdioConfig
+  | SmitheryHttpConfig;
 
 export type MCPToolInfo = {
   name: string;
