@@ -285,13 +285,6 @@ export async function POST(request: Request) {
           .map((v) => filterMcpServerCustomizations(MCP_TOOLS!, v))
           .orElse({});
 
-        const systemPrompt = mergeSystemPrompt(
-          buildUserSystemPrompt(session.user, userPreferences, agent),
-          buildMcpServerCustomizationsSystemPrompt(mcpServerCustomizations),
-          !supportToolCall && buildToolCallUnsupportedModelSystemPrompt,
-          Object.keys(vercelAITooles).length > 0 && TOOL_CALL_GUARDRAIL_PROMPT,
-        );
-
         const IMAGE_TOOL: Record<string, Tool> = useImageTool
           ? {
               [ImageToolName]:
@@ -318,6 +311,13 @@ export async function POST(request: Request) {
           })
           .unwrap();
         metadata.toolCount = Object.keys(vercelAITooles).length;
+
+        const systemPrompt = mergeSystemPrompt(
+          buildUserSystemPrompt(session.user, userPreferences, agent),
+          buildMcpServerCustomizationsSystemPrompt(mcpServerCustomizations),
+          !supportToolCall && buildToolCallUnsupportedModelSystemPrompt,
+          Object.keys(vercelAITooles).length > 0 && TOOL_CALL_GUARDRAIL_PROMPT,
+        );
 
         const allowedMcpTools = Object.values(allowedMcpServers ?? {})
           .map((t) => t.tools)
