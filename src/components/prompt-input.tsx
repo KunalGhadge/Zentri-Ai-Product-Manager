@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "ui/button";
+import { motion, AnimatePresence } from "framer-motion";
 import { UIMessage, UseChatHelpers } from "@ai-sdk/react";
 import { SelectModel } from "./select-model";
 import { appStore, UploadedFile } from "@/app/store";
@@ -612,24 +613,52 @@ export default function PromptInput({
                 <div className="flex-1" />
 
                 {input.trim().length > 0 && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        disabled={isEnhancing}
-                        onClick={handleEnhance}
-                        className="rounded-full hover:bg-input! p-2! text-primary/70 hover:text-primary transition-colors"
-                      >
-                        {isEnhancing ? (
-                          <Loader2 className="size-4 animate-spin" />
-                        ) : (
-                          <Sparkles className="size-4" />
-                        )}
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Enhance for AI</TooltipContent>
-                  </Tooltip>
+                  <motion.div
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ 
+                      scale: 1, 
+                      opacity: 1,
+                    }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  >
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          disabled={isEnhancing}
+                          onClick={handleEnhance}
+                          className="rounded-full hover:bg-input! p-2! text-primary/80 hover:text-primary transition-colors relative group/sparkle"
+                        >
+                          <motion.div
+                            animate={{ 
+                              opacity: [0.4, 1, 0.4],
+                              scale: [1, 1.1, 1],
+                            }}
+                            transition={{ 
+                              repeat: Infinity, 
+                              duration: 3, 
+                              ease: "easeInOut" 
+                            }}
+                            className="absolute inset-0 rounded-full bg-primary/10 blur-sm group-hover/sparkle:bg-primary/20 transition-colors"
+                          />
+                          {isEnhancing ? (
+                            <Loader2 className="size-4 animate-spin" />
+                          ) : (
+                            <Sparkles className="size-4 relative z-10" />
+                          )}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <div className="flex flex-col gap-1">
+                          <span className="font-bold">Expert Prompt Enhancer</span>
+                          <span className="text-[10px] opacity-80 text-pretty max-w-[200px]">
+                            Converts vague ideas into high-yield, error-free instructions for MCP, Data Vis, & Code.
+                          </span>
+                        </div>
+                      </TooltipContent>
+                    </Tooltip>
+                  </motion.div>
                 )}
 
                 <SelectModel onSelect={setChatModel} currentModel={chatModel}>

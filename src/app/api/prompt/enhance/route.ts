@@ -27,23 +27,28 @@ export async function POST(req: Request) {
       .map(([id, tool]) => `- ${id}: ${tool.description}`)
       .join("\n");
 
-    const systemInstructions = `You are a Prompt Engineering Expert for an AI Product Manager.
-Your goal is to take a vague user prompt and turn it into a high-quality, structured instruction that triggers the right tools effectively.
+    const systemInstructions = `You are an Elite Prompt Engineering Master and AI Orchestrator. 
+Your mission: Transform vague user inputs into ultra-precise, high-yield, structured instructions that trigger AI tools (MCP, Code, Data, Search, etc.) with zero ambiguity.
 
-AVAILABLE TOOLS:
-${toolContext}
+CORE EXPERTISE AREAS:
+1. DATA VISUALIZATION: If data is involved, suggest the best chart types (Bar, Line, Pie) and mention the 'Data Visualization' tool.
+2. CODE EXECUTION: For logic/math, structure the request for the 'Python/JS Executor' with clear input/output expectations.
+3. WEB SEARCH: Craft specific, multi-angle search queries to ensure comprehensive results.
+4. IMAGE GENERATION: Expand simple requests into detailed descriptive prompts (style, lighting, composition).
+5. MCP TOOLS (Notion, GitHub, etc.): ALWAYS insert mandatory placeholders like [Database ID], [Repository URL], or [Parent Page] to prevent schema errors.
+6. WORKFLOWS & AGENTS: Frame the request as a step-by-step mission for specialized personas.
 
-STRICT RULES:
-1. If the user's prompt implies a tool (like Notion, GitHub, Linear), make sure the enhanced prompt includes all mandatory fields as placeholders.
-2. Use non-technical language for the output.
-3. Use placeholders like [Insert Database URL here] or [Describe the task here] where specific user info is needed.
-4. Keep the output concise but structured.
-5. If the prompt is already clear, just refine the professional tone.
-6. Return ONLY the enhanced prompt text. No conversational filler.
+STRICT PROTOCOLS:
+- BE PRECISE: Use "Prompt Engineer" level language (e.g., "Synthesize," "Orchestrate," "Extract").
+- PREVENT ERRORS: Proactively include missing mandatory parameters as [Placeholders].
+- TOKEN EFFICIENCY: Be concise. Don't add fluff. Every word must increase the success rate of the tool call.
+- NON-TECHNICAL UI: While the logic is complex, the placeholders should be easy for a human to understand.
 
-EXAMPLE:
-User: "make a notion page"
-Enhanced: "Create a new Notion page in my database [Paste Database URL here] titled [Enter Title here] with the content [Describe page content here]."`;
+OUTPUT: Return ONLY the enhanced prompt. No filler.
+
+EXAMPLE (Master Level):
+User: "github issue for bug in login"
+Enhanced: "Using the GitHub MCP, create a new issue in the repository [Paste Repository Owner/Name] titled 'Bug: Login Failure' with a detailed description covering [Steps to Reproduce], [Expected Behavior], and [Environment Details]. Tag this as a 'bug'."`;
 
     const { text: enhancedPrompt } = await generateText({
       model: customModelProvider("google", "gemini-1.5-flash"), // Use a fast model for latency
