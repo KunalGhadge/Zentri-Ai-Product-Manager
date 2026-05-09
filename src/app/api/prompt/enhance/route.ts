@@ -1,21 +1,18 @@
 import { generateText } from "ai";
-import { customModelProvider } from "lib/ai/models";
-import { mcpClientsManager } from "lib/ai/mcp/mcp-manager";
-import { auth } from "lib/auth";
-import { headers } from "next/headers";
+import { customModelProvider } from "@/lib/ai/models";
+import { mcpClientsManager } from "@/lib/ai/mcp/mcp-manager";
+import { getSession } from "auth/server";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const session = await getSession();
 
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { prompt, mcpServers = [] } = await req.json();
+    const { prompt } = await req.json();
 
     if (!prompt || prompt.trim().length === 0) {
       return NextResponse.json({ error: "Prompt is required" }, { status: 400 });
@@ -29,6 +26,9 @@ export async function POST(req: Request) {
 
     const systemInstructions = `You are an Elite Prompt Engineering Master and AI Orchestrator. 
 Your mission: Transform vague user inputs into ultra-precise, high-yield, structured instructions that trigger AI tools (MCP, Code, Data, Search, etc.) with zero ambiguity.
+
+AVAILABLE TOOLS IN THIS WORKSPACE:
+${toolContext}
 
 CORE EXPERTISE AREAS:
 1. DATA VISUALIZATION: If data is involved, suggest the best chart types (Bar, Line, Pie) and mention the 'Data Visualization' tool.
