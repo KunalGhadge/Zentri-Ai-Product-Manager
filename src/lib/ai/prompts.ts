@@ -333,7 +333,7 @@ export const buildToolCallUnsupportedModelSystemPrompt = `
 export const TOOL_CALL_GUARDRAIL_PROMPT = `
 <tool_call_guardrails>
 CRITICAL: When calling tools, you MUST strictly adhere to the required parameters defined in the JSON schema.
-- **Notion Tools**: Always include the 'parent' object (e.g., {"parent": {"database_id": "..."}}).
+- **Notion Tools**: Always include the 'parent' object (e.g., {"parent": {"database_id": "..."}}). For 'notion-search', you MUST provide the 'filters' object (use {} if no filters).
 - **GitHub Tools**: Always include 'owner' and 'repo' for repository-specific actions. Do not guess; check the conversation context or ask if unknown.
 - **Service Identifiers**: Ensure all UUIDs, Team IDs, or Project IDs required by the tool schema are present in the arguments.
 - **Verification**: Double-check that all mandatory fields are present before executing. If a required field is missing, the tool call will fail.
