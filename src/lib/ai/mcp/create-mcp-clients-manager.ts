@@ -258,7 +258,7 @@ export class MCPClientsManager {
       });
     }
 
-    return this.clients.get(id)!;
+    return this.clients.get(id)!.client.getInfo();
   }
 
   /**
@@ -293,7 +293,7 @@ export class MCPClientsManager {
     }
     this.logger.info(`Refreshing client ${server.name}`);
     await this.addClient(id, server.name, server.config);
-    return this.clients.get(id) || null;
+    return this.clients.get(id)?.client.getInfo() || null;
   }
 
   async cleanup() {

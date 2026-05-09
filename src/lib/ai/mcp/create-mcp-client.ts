@@ -340,7 +340,7 @@ export class MCPClient {
       this.error = errorToString(error);
       this.transport = undefined;
       this.options.onConnectionStatusChange?.("error");
-      throw error;
+      throw new Error(this.error);
     } finally {
       this.locker.unlock();
     }
