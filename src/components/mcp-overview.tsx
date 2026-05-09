@@ -49,15 +49,6 @@ export const RECOMMENDED_MCPS = [
     icon: LinearIcon,
   },
   {
-    name: "playwright",
-    label: "Playwright (Local)",
-    config: {
-      command: "npx",
-      args: ["@playwright/mcp@latest"],
-    },
-    icon: PlaywrightIcon,
-  },
-  {
     name: "neon",
     label: "Neon",
     config: {
