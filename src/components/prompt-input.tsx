@@ -626,26 +626,28 @@ export default function PromptInput({
                         <Button
                           variant="ghost"
                           size="sm"
-                          disabled={isEnhancing}
+                          disabled={isEnhancing || mentions.length > 0}
                           onClick={handleEnhance}
                           className="rounded-full hover:bg-input! p-2! text-primary/80 hover:text-primary transition-colors relative group/sparkle"
                         >
-                          <motion.div
-                            animate={{ 
-                              opacity: [0.4, 1, 0.4],
-                              scale: [1, 1.1, 1],
-                            }}
-                            transition={{ 
-                              repeat: Infinity, 
-                              duration: 3, 
-                              ease: "easeInOut" 
-                            }}
-                            className="absolute inset-0 rounded-full bg-primary/10 blur-sm group-hover/sparkle:bg-primary/20 transition-colors"
-                          />
+                          {mentions.length === 0 && !isEnhancing && (
+                            <motion.div
+                              animate={{ 
+                                opacity: [0.4, 1, 0.4],
+                                scale: [1, 1.1, 1],
+                              }}
+                              transition={{ 
+                                repeat: Infinity, 
+                                duration: 3, 
+                                ease: "easeInOut" 
+                              }}
+                              className="absolute inset-0 rounded-full bg-primary/10 blur-sm group-hover/sparkle:bg-primary/20 transition-colors"
+                            />
+                          )}
                           {isEnhancing ? (
                             <Loader2 className="size-4 animate-spin" />
                           ) : (
-                            <Sparkles className="size-4 relative z-10" />
+                            <Sparkles className={cn("size-4 relative z-10", mentions.length > 0 && "opacity-50")} />
                           )}
                         </Button>
                       </TooltipTrigger>
@@ -653,7 +655,9 @@ export default function PromptInput({
                         <div className="flex flex-col gap-1">
                           <span className="font-bold">Expert Prompt Enhancer</span>
                           <span className="text-[10px] opacity-80 text-pretty max-w-[200px]">
-                            Converts vague ideas into high-yield, error-free instructions for MCP, Data Vis, & Code.
+                            {mentions.length > 0 
+                              ? "Remove manual tool mentions to use the enhancer."
+                              : "Converts vague ideas into high-yield, error-free instructions for MCP, Data Vis, & Code."}
                           </span>
                         </div>
                       </TooltipContent>
