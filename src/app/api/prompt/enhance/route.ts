@@ -51,7 +51,10 @@ User: "github issue for bug in login"
 Enhanced: "Using the GitHub MCP, create a new issue in the repository [Paste Repository Owner/Name] titled 'Bug: Login Failure' with a detailed description covering [Steps to Reproduce], [Expected Behavior], and [Environment Details]. Tag this as a 'bug'."`;
 
     const { text: enhancedPrompt } = await generateText({
-      model: customModelProvider("google", "gemini-1.5-flash"), // Use a fast model for latency
+      model: customModelProvider.getModel({
+        provider: "google",
+        model: "gemini-2.5-flash-lite",
+      }), // Use a fast model for latency
       system: systemInstructions,
       prompt: `Enhance this prompt: "${prompt}"`,
     });
