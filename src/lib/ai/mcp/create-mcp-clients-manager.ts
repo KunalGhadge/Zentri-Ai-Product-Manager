@@ -245,10 +245,22 @@ export class MCPClientsManager {
       const entity = await this.storage.save(server);
       id = entity.id;
     }
+    // Fetch existing server to preserve toolInfo if it exists
+    const existingServer = await this.storage.get(id);
+    const cachedTools = existingServer?.toolInfo || [];
+
     // On Vercel, we skip the immediate connection during persistence for non-remote servers to avoid timeouts.
     // The connection for remote servers is safe and required for tool discovery.
     if (process.env.VERCEL === "1" && !isMaybeRemoteConfig(server.config)) {
-      this.addClientWithCachedToolInfo(id, server.name, server.config, []);
+      this.logger.info(
+        `Vercel: Skipping connection for Stdio server ${server.name}, preserving ${cachedTools.length} tools`,
+      );
+      this.addClientWithCachedToolInfo(
+        id,
+        server.name,
+        server.config,
+        cachedTools,
+      );
       const client = this.clients.get(id)?.client;
       if (client) {
         client.setError(
@@ -256,6 +268,9 @@ export class MCPClientsManager {
         );
       }
     } else {
+      this.logger.info(
+        `Initiating connection and discovery for server ${server.name}`,
+      );
       await this.addClient(id, server.name, server.config).catch((err) => {
         if (!server.id) {
           void this.removeClient(id);

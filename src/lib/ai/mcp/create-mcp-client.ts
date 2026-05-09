@@ -376,17 +376,29 @@ export class MCPClient {
   }
   async updateToolInfo() {
     if (this.status === "connected" && this.client) {
-      this.logger.info("Updating tool info");
-      const toolResponse = await this.client.listTools();
-      this.toolInfo = toolResponse.tools.map(
-        (tool) =>
-          ({
-            name: tool.name,
-            description: tool.description,
-            inputSchema: tool.inputSchema,
-          }) as MCPToolInfo,
+      this.logger.info(`Updating tool info for ${this.name}`);
+      try {
+        const toolResponse = await this.client.listTools();
+        const tools = toolResponse.tools.map(
+          (tool) =>
+            ({
+              name: tool.name,
+              description: tool.description,
+              inputSchema: tool.inputSchema,
+            }) as MCPToolInfo,
+        );
+        this.toolInfo = tools;
+        this.logger.info(
+          `Successfully discovered ${tools.length} tools for ${this.name}`,
+        );
+        this.options.onToolInfoUpdate?.(this.toolInfo);
+      } catch (error) {
+        this.logger.error(`Failed to list tools for ${this.name}:`, error);
+      }
+    } else {
+      this.logger.warn(
+        `Skipping tool update for ${this.name}: status=${this.status}, hasClient=${!!this.client}`,
       );
-      this.options.onToolInfoUpdate?.(this.toolInfo);
     }
   }
 
