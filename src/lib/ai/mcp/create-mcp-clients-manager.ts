@@ -18,6 +18,7 @@ import {
 import { safe } from "ts-safe";
 import { McpServerTable } from "lib/db/pg/schema.pg";
 import { createMCPToolId } from "./mcp-tool-id";
+import { isMaybeRemoteConfig } from "./is-mcp-config";
 import globalLogger from "logger";
 import { jsonSchema, ToolCallOptions } from "ai";
 import { createMemoryMCPConfigStorage } from "./memory-mcp-config-storage";
@@ -117,8 +118,11 @@ export class MCPClientsManager {
                   return Promise.resolve();
                 }
                 // New servers or servers without cache — connect in background
-                // On Vercel, we skip background connect to keep cold starts fast
-                if (process.env.VERCEL === "1") {
+                // On Vercel, we skip background connect for non-remote servers to keep cold starts fast
+                if (
+                  process.env.VERCEL === "1" &&
+                  !isMaybeRemoteConfig(config)
+                ) {
                   this.addClientWithCachedToolInfo(
                     id,
                     name,
@@ -241,9 +245,9 @@ export class MCPClientsManager {
       const entity = await this.storage.save(server);
       id = entity.id;
     }
-    // On Vercel, we skip the immediate connection during persistence to avoid timeouts.
-    // The connection will happen lazily when a tool is called.
-    if (process.env.VERCEL === "1") {
+    // On Vercel, we skip the immediate connection during persistence for non-remote servers to avoid timeouts.
+    // The connection for remote servers is safe and required for tool discovery.
+    if (process.env.VERCEL === "1" && !isMaybeRemoteConfig(server.config)) {
       this.addClientWithCachedToolInfo(id, server.name, server.config, []);
     } else {
       await this.addClient(id, server.name, server.config).catch((err) => {
