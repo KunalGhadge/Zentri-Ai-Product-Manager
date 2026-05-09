@@ -335,25 +335,31 @@ export class MCPClient {
       } else if (isSmitheryHttpConfig(processedConfig)) {
         // Smithery HTTP Gateway mode
         // Legacy MCP JSON-RPC is bypassed for modern hosted HTTP integrations.
-        this.logger.info(`Connecting to Smithery HTTP Gateway: ${processedConfig.namespace}/${processedConfig.connectionId}`);
-        
+        this.logger.info(
+          `Connecting to Smithery HTTP Gateway: ${processedConfig.namespace}/${processedConfig.connectionId}`,
+        );
+
         const response = await fetch(
           `https://smithery.run/${processedConfig.namespace}/${processedConfig.connectionId}`,
           {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
-              Authorization: processedConfig.apiKey ? `Bearer ${processedConfig.apiKey}` : "",
+              Authorization: processedConfig.apiKey
+                ? `Bearer ${processedConfig.apiKey}`
+                : "",
             },
             body: JSON.stringify({
               mcpUrl: processedConfig.mcpUrl,
             }),
-          }
+          },
         );
 
         if (!response.ok) {
           const errorText = await response.text();
-          throw new Error(`Smithery connection failed: ${response.status} ${errorText}`);
+          throw new Error(
+            `Smithery connection failed: ${response.status} ${errorText}`,
+          );
         }
 
         this.isConnected = true;
@@ -406,7 +412,7 @@ export class MCPClient {
   }
   async updateToolInfo() {
     const processedConfig = this.getProcessedConfig();
-    
+
     if (isSmitheryHttpConfig(processedConfig) && this.isConnected) {
       this.logger.info(`Updating tool info for Smithery HTTP ${this.name}`);
       try {
@@ -414,9 +420,11 @@ export class MCPClient {
           `https://smithery.run/${processedConfig.namespace}/${processedConfig.connectionId}/.tools`,
           {
             headers: {
-              Authorization: processedConfig.apiKey ? `Bearer ${processedConfig.apiKey}` : "",
+              Authorization: processedConfig.apiKey
+                ? `Bearer ${processedConfig.apiKey}`
+                : "",
             },
-          }
+          },
         );
 
         if (!response.ok) {
@@ -426,14 +434,17 @@ export class MCPClient {
         const rawResponse = await response.json();
         this.logger.debug(`Smithery discovery payload for ${this.name}:`, {
           type: typeof rawResponse,
-          keys: rawResponse && typeof rawResponse === "object" ? Object.keys(rawResponse) : [],
+          keys:
+            rawResponse && typeof rawResponse === "object"
+              ? Object.keys(rawResponse)
+              : [],
           isArray: Array.isArray(rawResponse),
         });
 
         // Normalize: Smithery/MCP often wraps tools in a 'tools' property
-        const toolsArray = Array.isArray(rawResponse) 
-          ? rawResponse 
-          : (rawResponse?.tools && Array.isArray(rawResponse.tools))
+        const toolsArray = Array.isArray(rawResponse)
+          ? rawResponse
+          : rawResponse?.tools && Array.isArray(rawResponse.tools)
             ? rawResponse.tools
             : [];
 
@@ -488,32 +499,41 @@ export class MCPClient {
     this.inProgressToolCallIds.push(id);
     const execute = async () => {
       const processedConfig = this.getProcessedConfig();
-      
+
       if (isSmitheryHttpConfig(processedConfig)) {
         await this.connect();
-        
-        this.logger.info(`Executing tool ${toolName} via Smithery HTTP Gateway`);
+
+        this.logger.info(
+          `Executing tool ${toolName} via Smithery HTTP Gateway`,
+        );
         const response = await fetch(
           `https://smithery.run/${processedConfig.namespace}/${processedConfig.connectionId}/.tools/${toolName}`,
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: processedConfig.apiKey ? `Bearer ${processedConfig.apiKey}` : "",
+              Authorization: processedConfig.apiKey
+                ? `Bearer ${processedConfig.apiKey}`
+                : "",
             },
             body: JSON.stringify(input),
-          }
+          },
         );
 
         if (!response.ok) {
           const errorText = await response.text();
-          throw new Error(`Smithery tool execution failed: ${response.status} ${errorText}`);
+          throw new Error(
+            `Smithery tool execution failed: ${response.status} ${errorText}`,
+          );
         }
 
         const rawResult = await response.json();
         this.logger.debug(`Smithery execution payload for ${toolName}:`, {
           type: typeof rawResult,
-          keys: rawResult && typeof rawResult === "object" ? Object.keys(rawResult) : [],
+          keys:
+            rawResult && typeof rawResult === "object"
+              ? Object.keys(rawResult)
+              : [],
           hasContent: rawResult && "content" in rawResult,
         });
 
@@ -524,8 +544,10 @@ export class MCPClient {
 
         // If it's a direct array of content or just a string, wrap it
         return {
-          content: Array.isArray(rawResult) ? rawResult : [{ type: "text", text: JSON.stringify(rawResult) }],
-          isError: false
+          content: Array.isArray(rawResult)
+            ? rawResult
+            : [{ type: "text", text: JSON.stringify(rawResult) }],
+          isError: false,
         };
       }
 

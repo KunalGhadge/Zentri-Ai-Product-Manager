@@ -222,8 +222,50 @@ export default function MCPEditor({
     setSmitheryCommand(cmd);
     if (!cmd.trim()) return;
 
-    // Parse npx command
-    // Example: npx -y @modelcontextprotocol/server-github
+    // 1. Detect Smithery Hosted URL (e.g., https://smithery.run/@user/server)
+    const urlMatch = cmd.match(
+      /smithery\.run\/(@[a-zA-Z0-9\-]+)\/([a-zA-Z0-9\-]+)/,
+    );
+    if (urlMatch) {
+      const namespace = urlMatch[1];
+      const connectionId = urlMatch[2];
+      const newConfig = {
+        type: "smithery-http",
+        namespace,
+        connectionId,
+        mcpUrl: `https://server.smithery.ai/${namespace.replace("@", "")}/${connectionId}`,
+        apiKey: "",
+      };
+      setConfig(newConfig as any);
+      setJsonString(JSON.stringify(newConfig, null, 2));
+      if (!name.trim()) setName(connectionId);
+      toast.success(t("MCP.smitheryConfigParsed"));
+      return;
+    }
+
+    // 2. Detect Smithery PUT Curl command
+    if (cmd.includes("smithery.run") && cmd.includes("-X PUT")) {
+      const namespaceMatch = cmd.match(/smithery\.run\/([^/]+)\/([^/\s?]+)/);
+      const mcpUrlMatch = cmd.match(/"mcpUrl":\s*"([^"]+)"/);
+      const apiKeyMatch = cmd.match(/Bearer\s+([^"\s]+)/);
+
+      if (namespaceMatch) {
+        const newConfig = {
+          type: "smithery-http",
+          namespace: namespaceMatch[1],
+          connectionId: namespaceMatch[2],
+          mcpUrl: mcpUrlMatch ? mcpUrlMatch[1] : "",
+          apiKey: apiKeyMatch ? apiKeyMatch[1] : "",
+        };
+        setConfig(newConfig as any);
+        setJsonString(JSON.stringify(newConfig, null, 2));
+        if (!name.trim()) setName(newConfig.connectionId);
+        toast.success(t("MCP.smitheryConfigParsed"));
+        return;
+      }
+    }
+
+    // 3. Parse traditional npx command (fallback)
     const parts = cmd.split(" ").filter((p) => p.trim() !== "");
     if (parts[0] === "npx") {
       const args = parts.slice(1).filter((p) => p !== "-y");
@@ -231,7 +273,7 @@ export default function MCPEditor({
         command: "npx",
         args: args,
       };
-      setConfig(newConfig);
+      setConfig(newConfig as any);
       setJsonString(JSON.stringify(newConfig, null, 2));
       toast.success(t("MCP.smitheryConfigParsed"));
     }
