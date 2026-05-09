@@ -240,6 +240,82 @@ export function errorToString(error: unknown) {
   return JSON.stringify(error);
 }
 
+/**
+ * Transforms technical "developer" errors into professional, human-readable messages.
+ * This is used for UI feedback while maintaining original errors in logs.
+ */
+export function toUserFriendlyError(error: unknown): string {
+  const message = errorToString(error);
+
+  // 1. AI Provider / Rate Limit Errors
+  if (
+    message.includes("TPM") ||
+    message.includes("tokens per minute") ||
+    message.includes("limit 6000")
+  ) {
+    return "The request is too large for the current plan. Try disabling some MCP tools (like Notion) or start a new chat thread.";
+  }
+  if (
+    message.includes("RPM") ||
+    message.includes("requests per minute") ||
+    message.includes("Rate limit")
+  ) {
+    return "AI rate limit reached. Please wait a few moments before trying again.";
+  }
+
+  // 2. MCP / Transport Errors
+  if (
+    message.includes("Stdio transport") &&
+    (message.includes("not supported") || message.includes("Vercel"))
+  ) {
+    return "Local MCP (Stdio) is not supported in production. Please use a Remote (SSE) MCP server.";
+  }
+  if (
+    message.includes("ECONNREFUSED") ||
+    message.includes("Failed to fetch") ||
+    message.includes("fetch failed")
+  ) {
+    return "Could not connect to the external service. It might be offline or the URL is incorrect.";
+  }
+  if (message.includes("Handshake timeout") || message.includes("Timeout")) {
+    return "The connection took too long to establish. Please check your network and try again.";
+  }
+
+  // 3. Auth / Permission Errors
+  if (
+    message.includes("Unauthorized") ||
+    message.includes("401") ||
+    message.includes("authentication")
+  ) {
+    return "Access denied. Please check your credentials or log in again.";
+  }
+  if (message.includes("Forbidden") || message.includes("403")) {
+    return "You do not have the required permissions for this action.";
+  }
+
+  // 4. Database / State Errors
+  if (
+    message.includes("unique constraint") ||
+    message.includes("already exists")
+  ) {
+    return "This item already exists in our system.";
+  }
+  if (message.includes("not found") || message.includes("404")) {
+    return "The requested item could not be found.";
+  }
+
+  // 5. Generic fallback for technical errors
+  if (
+    message.includes("Internal Server Error") ||
+    message.includes("500") ||
+    message.includes("unexpected token")
+  ) {
+    return "A technical error occurred on our end. We have been notified and are looking into it.";
+  }
+
+  return message;
+}
+
 export function objectFlow<T extends Record<string, any>>(obj: T) {
   return {
     map: <R>(

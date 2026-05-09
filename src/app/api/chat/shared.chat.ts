@@ -16,7 +16,7 @@ import {
   ChatMetadata,
   ManualToolConfirmTag,
 } from "app-types/chat";
-import { errorToString, exclude, objectFlow } from "lib/utils";
+import { errorToString, exclude, objectFlow, toUserFriendlyError } from "lib/utils";
 import logger from "logger";
 import {
   AllowedMCPServer,
@@ -161,9 +161,13 @@ export function handleError(error: any) {
   if (LoadAPIKeyError.isInstance(error)) {
     return error.message;
   }
+
+  // Log the raw error for developers
   logger.error(error);
-  logger.error(`Route Error: ${error.name}`);
-  return errorToString(error.message);
+  logger.error(`Route Error: ${error.name || "Unknown"}`);
+
+  // Return a friendly version for the UI
+  return toUserFriendlyError(error);
 }
 
 export function extractInProgressToolPart(message: UIMessage): ToolUIPart[] {
