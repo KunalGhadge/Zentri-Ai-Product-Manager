@@ -101,41 +101,56 @@ export class MCPClientsManager {
           await Promise.all(
             configs.map(
               ({ id, name, config, toolInfo, lastConnectionStatus }) => {
-                if (toolInfo?.length) {
-                  this.logger.info(
-                    `Loading cached tool info for ${name} (${toolInfo.length} tools)`,
-                  );
-                  this.addClientWithCachedToolInfo(id, name, config, toolInfo);
-                  return Promise.resolve();
-                }
-                // Register errored servers without connecting
-                // — user can manually refresh these from the UI
-                if (lastConnectionStatus === "error") {
-                  this.logger.info(
-                    `Registering ${name} without connect (last status: error)`,
-                  );
-                  this.addClientWithCachedToolInfo(id, name, config, []);
-                  return Promise.resolve();
-                }
-                // New servers or servers without cache — connect in background
-                // On Vercel, we skip background connect for non-remote servers to keep cold starts fast
-                if (
-                  process.env.VERCEL === "1" &&
-                  !isMaybeRemoteConfig(config) &&
-                  !isSmitheryHttpConfig(config)
-                ) {
-                  this.addClientWithCachedToolInfo(
-                    id,
-                    name,
-                    config,
-                    toolInfo || [],
-                  );
-                  return Promise.resolve();
-                }
+                // Individual safety wrapper for each server init
+                const initServer = async () => {
+                  try {
+                    if (toolInfo?.length) {
+                      this.logger.info(
+                        `Loading cached tool info for ${name} (${toolInfo.length} tools)`,
+                      );
+                      this.addClientWithCachedToolInfo(
+                        id,
+                        name,
+                        config,
+                        toolInfo,
+                      );
+                      return;
+                    }
+                    if (lastConnectionStatus === "error") {
+                      this.logger.info(
+                        `Registering ${name} without connect (last status: error)`,
+                      );
+                      this.addClientWithCachedToolInfo(id, name, config, []);
+                      return;
+                    }
+                    if (
+                      process.env.VERCEL === "1" &&
+                      !isMaybeRemoteConfig(config) &&
+                      !isSmitheryHttpConfig(config)
+                    ) {
+                      this.addClientWithCachedToolInfo(
+                        id,
+                        name,
+                        config,
+                        toolInfo || [],
+                      );
+                      return;
+                    }
 
-                return this.addClient(id, name, config).catch(() => {
-                  `ignore error`;
-                });
+                    await this.addClient(id, name, config);
+                  } catch (err) {
+                    this.logger.error(`Failed to initialize ${name}:`, err);
+                    // Pre-populate with empty info on failure to ensure UI renders
+                    this.addClientWithCachedToolInfo(
+                      id,
+                      name,
+                      config,
+                      toolInfo || [],
+                    );
+                  }
+                };
+
+                return initServer();
               },
             ),
           );
@@ -226,11 +241,11 @@ export class MCPClientsManager {
     }
     const client = createMCPClient(id, name, serverConfig, {
       autoDisconnectSeconds: this.autoDisconnectSeconds,
-      onToolInfoUpdate: (toolInfo) => {
-        this.storage?.updateToolInfo?.(id, toolInfo);
+      onToolInfoUpdate: async (toolInfo) => {
+        await this.storage?.updateToolInfo?.(id, toolInfo);
       },
-      onConnectionStatusChange: (status) => {
-        this.storage?.updateConnectionStatus?.(id, status);
+      onConnectionStatusChange: async (status) => {
+        await this.storage?.updateConnectionStatus?.(id, status);
       },
     });
     this.clients.set(id, { client, name });
@@ -318,7 +333,13 @@ export class MCPClientsManager {
       return null;
     }
     this.logger.info(`Refreshing client ${server.name}`);
-    await this.addClient(id, server.name, server.config);
+    try {
+      await this.addClient(id, server.name, server.config);
+    } catch (error) {
+      this.logger.error(`Failed to refresh client ${server.name}:`, error);
+      // We don't re-throw here to avoid crashing the Server Component render.
+      // The client state will correctly reflect the error status.
+    }
     return this.clients.get(id) || null;
   }
 

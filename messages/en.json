@@ -820,6 +820,8 @@
     "public": "Featured",
     "publicDescription": "Featured for all users to use",
     "featured": "Featured",
-    "featuredDescription": "Featured for all users to use"
+    "featuredDescription": "Featured for all users to use",
+    "unsupportedTransportInProduction": "Unsupported Transport in Production",
+    "stdioNotSupportedOnVercel": "Stdio transport (npx/command) is not supported in the Vercel serverless environment. Local processes cannot be spawned on Vercel. Please use an SSE (Remote) MCP server for production deployments."
   }
 }

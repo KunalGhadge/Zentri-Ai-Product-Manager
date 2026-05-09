@@ -104,6 +104,19 @@ export async function saveMcpClientAction(
   };
 
   const client = await mcpClientsManager.persistClient(serverWithUser);
+
+  // STABILIZATION: Trigger explicit tool discovery after save.
+  // This ensures that Remote (SSE/HTTP) servers populate their tools in the DB
+  // immediately, rather than waiting for a lazy connection call.
+  const config = serverWithUser.config;
+  const isRemote = "url" in config && typeof config.url === "string";
+
+  if (isRemote) {
+    const id = client.client.getInfo().id;
+    // Attempt discovery (swallow errors to prevent registration failure)
+    await mcpClientsManager.refreshClient(id).catch(() => null);
+  }
+
   return {
     ...client.client.getInfo(),
     id: client.client.getInfo().id,

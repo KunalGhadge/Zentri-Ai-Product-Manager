@@ -36,7 +36,7 @@ import { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 type ClientOptions = {
   autoDisconnectSeconds?: number;
   initialToolInfo?: MCPToolInfo[];
-  onToolInfoUpdate?: (toolInfo: MCPToolInfo[]) => void;
+  onToolInfoUpdate?: (toolInfo: MCPToolInfo[]) => void | Promise<void>;
   onConnectionStatusChange?: (status: "connected" | "error") => void;
 };
 
@@ -233,9 +233,9 @@ export class MCPClient {
 
       // Create appropriate transport based on server config type
       if (isMaybeStdioConfig(processedConfig)) {
-        // On Vercel, stdio is technically not supported in standard serverless functions.
-        // We'll allow the transport creation to proceed so it can be saved/managed in the UI,
-        // but it will likely fail during actual connection or tool execution.
+        // STABILIZATION: Production Stdio Restriction
+        // On Vercel, stdio is not supported because serverless functions cannot spawn persistent child processes.
+        // We explicitly block this in production to prevent silent failures and provide a clear error message.
         if (IS_MCP_SERVER_REMOTE_ONLY) {
           const errorMessage =
             "Stdio transport (npx/command) is not supported in the Vercel serverless environment. Please use an SSE (Remote) MCP server instead.";
@@ -333,37 +333,64 @@ export class MCPClient {
           }
         }
       } else if (isSmitheryHttpConfig(processedConfig)) {
-        // Smithery HTTP Gateway mode
+        // STABILIZATION: Smithery HTTP Gateway (Experimental)
+        // This is a proprietary transport system for hosted Smithery integrations.
         // Legacy MCP JSON-RPC is bypassed for modern hosted HTTP integrations.
         this.logger.info(
           `Connecting to Smithery HTTP Gateway: ${processedConfig.namespace}/${processedConfig.connectionId}`,
         );
 
-        const response = await fetch(
-          `https://smithery.run/${processedConfig.namespace}/${processedConfig.connectionId}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: processedConfig.apiKey
-                ? `Bearer ${processedConfig.apiKey}`
-                : "",
-            },
-            body: JSON.stringify({
-              mcpUrl: processedConfig.mcpUrl,
-            }),
-          },
-        );
+        const url = `https://smithery.run/${processedConfig.namespace}/${processedConfig.connectionId}`;
+        this.logger.info(`Smithery Handshake: PUT ${url}`);
 
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(
-            `Smithery connection failed: ${response.status} ${errorText}`,
-          );
+        let lastError: Error | null = null;
+        for (let attempt = 1; attempt <= 3; attempt++) {
+          try {
+            this.logger.info(`Smithery attempt ${attempt}/3...`);
+            const response = await fetch(url, {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "User-Agent": "Zentri-AI-PM/1.0",
+                Authorization: processedConfig.apiKey
+                  ? `Bearer ${processedConfig.apiKey}`
+                  : "",
+              },
+              body: JSON.stringify({
+                mcpUrl: processedConfig.mcpUrl,
+              }),
+              // Set a generous timeout for the handshake
+              signal: AbortSignal.timeout(30000),
+            });
+
+            if (!response.ok) {
+              const errorText = await response.text();
+              throw new Error(
+                `Smithery PUT failed (${response.status}): ${errorText}`,
+              );
+            }
+
+            this.logger.info(
+              `Smithery Handshake Successful: ${response.status}`,
+            );
+            this.isConnected = true;
+            this.scheduleAutoDisconnect();
+            lastError = null;
+            break;
+          } catch (error: any) {
+            this.logger.warn(`Smithery attempt ${attempt} failed:`, error);
+            lastError = error;
+            if (attempt < 3)
+              await new Promise((resolve) =>
+                setTimeout(resolve, 1000 * attempt),
+              );
+          }
         }
 
-        this.isConnected = true;
-        this.scheduleAutoDisconnect();
+        if (lastError) {
+          throw lastError;
+        }
       } else {
         throw new Error("Invalid server config");
       }
@@ -416,18 +443,26 @@ export class MCPClient {
     if (isSmitheryHttpConfig(processedConfig) && this.isConnected) {
       this.logger.info(`Updating tool info for Smithery HTTP ${this.name}`);
       try {
-        const response = await fetch(
-          `https://smithery.run/${processedConfig.namespace}/${processedConfig.connectionId}/.tools`,
-          {
-            headers: {
-              Authorization: processedConfig.apiKey
-                ? `Bearer ${processedConfig.apiKey}`
-                : "",
-            },
+        const url = `https://smithery.run/${processedConfig.namespace}/${processedConfig.connectionId}/.tools`;
+        const response = await fetch(url, {
+          headers: {
+            Accept: "application/json",
+            "User-Agent": "Zentri-AI-PM/1.0",
+            Authorization: processedConfig.apiKey
+              ? `Bearer ${processedConfig.apiKey}`
+              : "",
           },
-        );
+        });
 
         if (!response.ok) {
+          const errorText = await response.text();
+          this.logger.error(
+            `Smithery ListTools Failed: ${response.status} ${response.statusText}`,
+            {
+              url,
+              body: errorText,
+            },
+          );
           throw new Error(`Failed to fetch Smithery tools: ${response.status}`);
         }
 
@@ -459,7 +494,7 @@ export class MCPClient {
         this.logger.info(
           `Successfully discovered ${this.toolInfo.length} tools via Smithery HTTP`,
         );
-        this.options.onToolInfoUpdate?.(this.toolInfo);
+        await this.options.onToolInfoUpdate?.(this.toolInfo);
         return;
       } catch (error) {
         this.logger.error(`Failed to list Smithery tools:`, error);
@@ -483,7 +518,7 @@ export class MCPClient {
         this.logger.info(
           `Successfully discovered ${tools.length} tools for ${this.name}`,
         );
-        this.options.onToolInfoUpdate?.(this.toolInfo);
+        await this.options.onToolInfoUpdate?.(this.toolInfo);
       } catch (error) {
         this.logger.error(`Failed to list tools for ${this.name}:`, error);
       }
@@ -503,25 +538,32 @@ export class MCPClient {
       if (isSmitheryHttpConfig(processedConfig)) {
         await this.connect();
 
+        const url = `https://smithery.run/${processedConfig.namespace}/${processedConfig.connectionId}/.tools/${toolName}`;
         this.logger.info(
           `Executing tool ${toolName} via Smithery HTTP Gateway`,
         );
-        const response = await fetch(
-          `https://smithery.run/${processedConfig.namespace}/${processedConfig.connectionId}/.tools/${toolName}`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: processedConfig.apiKey
-                ? `Bearer ${processedConfig.apiKey}`
-                : "",
-            },
-            body: JSON.stringify(input),
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            "User-Agent": "Zentri-AI-PM/1.0",
+            Authorization: processedConfig.apiKey
+              ? `Bearer ${processedConfig.apiKey}`
+              : "",
           },
-        );
+          body: JSON.stringify(input),
+        });
 
         if (!response.ok) {
           const errorText = await response.text();
+          this.logger.error(
+            `Smithery tool execution failed: ${response.status} ${response.statusText}`,
+            {
+              url,
+              body: errorText,
+            },
+          );
           throw new Error(
             `Smithery tool execution failed: ${response.status} ${errorText}`,
           );

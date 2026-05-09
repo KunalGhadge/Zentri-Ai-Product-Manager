@@ -22,7 +22,9 @@ import {
   isMaybeMCPServerConfig,
   isMaybeRemoteConfig,
   isSmitheryHttpConfig,
+  isMaybeStdioConfig,
 } from "lib/ai/mcp/is-mcp-config";
+import { IS_VERCEL_ENV } from "lib/const";
 
 import { Alert, AlertDescription, AlertTitle } from "ui/alert";
 import { z } from "zod";
@@ -250,12 +252,23 @@ export default function MCPEditor({
       const apiKeyMatch = cmd.match(/Bearer\s+([^"\s]+)/);
 
       if (namespaceMatch) {
+        const namespace = namespaceMatch[1].replace("$NAMESPACE", "@user");
+        const connectionId = namespaceMatch[2].replace(
+          "$CONNECTION_ID",
+          "server",
+        );
         const newConfig = {
           type: "smithery-http",
-          namespace: namespaceMatch[1],
-          connectionId: namespaceMatch[2],
-          mcpUrl: mcpUrlMatch ? mcpUrlMatch[1] : "",
-          apiKey: apiKeyMatch ? apiKeyMatch[1] : "",
+          namespace,
+          connectionId,
+          mcpUrl: mcpUrlMatch
+            ? mcpUrlMatch[1]
+                .replace("$NAMESPACE", namespace)
+                .replace("$CONNECTION_ID", connectionId)
+            : "",
+          apiKey: apiKeyMatch
+            ? apiKeyMatch[1].replace("$SMITHERY_API_KEY", "")
+            : "",
         };
         setConfig(newConfig as any);
         setJsonString(JSON.stringify(newConfig, null, 2));
@@ -388,6 +401,21 @@ export default function MCPEditor({
             </div>
           </div>
         </div>
+
+        {/* Stdio on Vercel Warning */}
+        {IS_VERCEL_ENV && isMaybeStdioConfig(config) && (
+          <Alert
+            variant="destructive"
+            className="bg-destructive/10 border-destructive"
+          >
+            <AlertTitle className="text-xs font-bold flex items-center gap-2">
+              ⚠️ {t("MCP.unsupportedTransportInProduction")}
+            </AlertTitle>
+            <AlertDescription className="text-xs">
+              {t("MCP.stdioNotSupportedOnVercel")}
+            </AlertDescription>
+          </Alert>
+        )}
 
         {/* Save button */}
         <Button onClick={handleSave} className="w-full" disabled={saveDisabled}>
