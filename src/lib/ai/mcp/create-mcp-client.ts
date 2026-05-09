@@ -146,6 +146,10 @@ export class MCPClient {
     };
   }
 
+  setError(error: string) {
+    this.error = error;
+  }
+
   private createOAuthProvider(oauthState?: string) {
     if (isMaybeRemoteConfig(this.serverConfig) && this.needOauthProvider) {
       this.logger.info("Creating OAuth provider for MCP server authentication");
@@ -229,10 +233,11 @@ export class MCPClient {
         // We'll allow the transport creation to proceed so it can be saved/managed in the UI,
         // but it will likely fail during actual connection or tool execution.
         if (IS_MCP_SERVER_REMOTE_ONLY) {
-          const warning = `VERCEL: Stdio transport is not supported in the Vercel serverless environment. Proceeding without throwing to allow graceful fallback.`;
-          this.logger.warn(warning);
-          this.error = warning;
-          // Do not throw – let the later connection attempt fail gracefully.
+          const errorMessage =
+            "Stdio transport (npx/command) is not supported in the Vercel serverless environment. Please use an SSE (Remote) MCP server instead.";
+          this.logger.error(errorMessage);
+          this.error = errorMessage;
+          throw new Error(errorMessage);
         }
 
         const config = MCPStdioConfigZodSchema.parse(processedConfig);

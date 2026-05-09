@@ -249,6 +249,12 @@ export class MCPClientsManager {
     // The connection for remote servers is safe and required for tool discovery.
     if (process.env.VERCEL === "1" && !isMaybeRemoteConfig(server.config)) {
       this.addClientWithCachedToolInfo(id, server.name, server.config, []);
+      const client = this.clients.get(id)?.client;
+      if (client) {
+        client.setError(
+          "Stdio transport (npx/command) is not supported on Vercel. This server is saved but will not work unless you switch to an SSE (Remote) transport.",
+        );
+      }
     } else {
       await this.addClient(id, server.name, server.config).catch((err) => {
         if (!server.id) {
