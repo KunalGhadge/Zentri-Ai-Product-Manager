@@ -10,6 +10,7 @@ import {
   Loader2,
   PaperclipIcon,
   PlusIcon,
+  Sparkles,
   Square,
   XIcon,
 } from "lucide-react";
@@ -100,6 +101,33 @@ export default function PromptInput({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { uploadFiles } = useThreadFileUploader(threadId);
   const { data: providers } = useChatModels();
+  const [isEnhancing, setIsEnhancing] = useState(false);
+
+  const handleEnhance = useCallback(async () => {
+    if (!input || input.trim().length === 0 || isEnhancing) return;
+
+    setIsEnhancing(true);
+    try {
+      const response = await fetch("/api/prompt/enhance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: input }),
+      });
+
+      if (!response.ok) throw new Error("Enhancement failed");
+
+      const data = await response.json();
+      if (data.enhancedPrompt) {
+        setInput(data.enhancedPrompt);
+        toast.success("Prompt enhanced!");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Could not enhance prompt.");
+    } finally {
+      setIsEnhancing(false);
+    }
+  }, [input, isEnhancing, setInput]);
 
   const [
     globalModel,
@@ -582,6 +610,27 @@ export default function PromptInput({
                   ))}
 
                 <div className="flex-1" />
+
+                {input.trim().length > 0 && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        disabled={isEnhancing}
+                        onClick={handleEnhance}
+                        className="rounded-full hover:bg-input! p-2! text-primary/70 hover:text-primary transition-colors"
+                      >
+                        {isEnhancing ? (
+                          <Loader2 className="size-4 animate-spin" />
+                        ) : (
+                          <Sparkles className="size-4" />
+                        )}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Enhance for AI</TooltipContent>
+                  </Tooltip>
+                )}
 
                 <SelectModel onSelect={setChatModel} currentModel={chatModel}>
                   <Button
