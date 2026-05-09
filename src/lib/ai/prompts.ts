@@ -329,3 +329,11 @@ export const buildToolCallUnsupportedModelSystemPrompt = `
 - You are using a model that does not support tool calls. 
 - When users request tool usage, simply explain that the current model cannot use tools and that they can switch to a model that supports tool calling to use tools.
 `.trim();
+
+export const TOOL_CALL_GUARDRAIL_PROMPT = `
+<tool_call_guardrails>
+CRITICAL: When calling tools, you MUST strictly adhere to the required parameters defined in the JSON schema.
+- **Notion Tools**: When creating pages or database items, you MUST always include the 'parent' object (e.g., {"parent": {"database_id": "..."}} or {"parent": {"page_id": "..."}}).
+- **Verification**: Double-check that all mandatory fields are present before executing. If a required field is missing, the tool call will fail.
+- **Formatting**: Ensure JSON arguments are perfectly formatted according to the schema.
+</tool_call_guardrails>`.trim();

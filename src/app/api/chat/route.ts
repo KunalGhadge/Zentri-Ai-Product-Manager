@@ -22,6 +22,7 @@ import {
   buildMcpServerCustomizationsSystemPrompt,
   buildUserSystemPrompt,
   buildToolCallUnsupportedModelSystemPrompt,
+  TOOL_CALL_GUARDRAIL_PROMPT,
 } from "lib/ai/prompts";
 import {
   chatApiSchemaRequestBodySchema,
@@ -288,6 +289,7 @@ export async function POST(request: Request) {
           buildUserSystemPrompt(session.user, userPreferences, agent),
           buildMcpServerCustomizationsSystemPrompt(mcpServerCustomizations),
           !supportToolCall && buildToolCallUnsupportedModelSystemPrompt,
+          Object.keys(vercelAITooles).length > 0 && TOOL_CALL_GUARDRAIL_PROMPT,
         );
 
         const IMAGE_TOOL: Record<string, Tool> = useImageTool
