@@ -164,7 +164,29 @@ export default function MCPEditor({
     const result = safeJSONParse(data);
     errorDebounce.clear();
     if (result.success) {
-      setConfig(result.value as MCPServerConfig);
+      let value = result.value as any;
+
+      // Detect and normalize wrapped mcpServers format
+      if (
+        value &&
+        typeof value === "object" &&
+        "mcpServers" in value &&
+        value.mcpServers &&
+        typeof value.mcpServers === "object"
+      ) {
+        const servers = value.mcpServers as Record<string, any>;
+        const firstKey = Object.keys(servers)[0];
+        if (firstKey && servers[firstKey]) {
+          value = servers[firstKey];
+          // Auto-fill the name if it's currently empty
+          if (!name.trim()) {
+            setName(firstKey);
+            validateName(firstKey);
+          }
+        }
+      }
+
+      setConfig(value as MCPServerConfig);
       setJsonError(null);
     } else if (data.trim() !== "") {
       errorDebounce(() => {
