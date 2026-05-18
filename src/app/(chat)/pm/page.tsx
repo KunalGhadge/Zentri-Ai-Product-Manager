@@ -7,7 +7,6 @@ import {
   SlidersHorizontal,
   FileText,
   Upload,
-  Layers,
   ArrowRight,
   CheckCircle,
   Database,
@@ -364,10 +363,10 @@ export default function PMDashboard() {
 
   if (workspaceError) {
     return (
-      <div className="flex h-screen items-center justify-center bg-background text-foreground p-6">
-        <Card className="max-w-md border-red-500/20 bg-red-500/5">
+      <div className="w-full flex flex-col items-center justify-center h-[calc(100vh-4rem)] p-8">
+        <Card className="max-w-md border-destructive/20 bg-destructive/5">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-red-400">
+            <CardTitle className="flex items-center gap-2 text-destructive">
               <AlertCircle className="size-5" /> Connection Failed
             </CardTitle>
             <CardDescription>
@@ -378,7 +377,7 @@ export default function PMDashboard() {
           <CardContent className="text-sm text-muted-foreground">
             Please make sure that the backend database is properly configured
             and migrations are up to date. Run{" "}
-            <code className="bg-muted px-1 py-0.5 rounded">pnpm dev</code> or
+            <code className="bg-secondary px-1 py-0.5 rounded">pnpm dev</code> or
             check environment secrets.
           </CardContent>
         </Card>
@@ -387,25 +386,19 @@ export default function PMDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col p-6 md:p-8 space-y-8">
+    <div className="w-full flex flex-col gap-6 p-8">
       {/* Header Panel */}
-      <div className="relative overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/40 p-6 md:p-8 backdrop-blur-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/5 rounded-full filter blur-[80px] pointer-events-none" />
-        <div className="absolute bottom-0 left-20 w-80 h-80 bg-emerald-500/5 rounded-full filter blur-[80px] pointer-events-none" />
-
-        <div className="space-y-2">
-          <div className="flex items-center gap-2.5">
-            <span className="flex items-center justify-center size-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
-              <Layers className="size-4.5 text-indigo-400" />
-            </span>
-            <Badge className="bg-indigo-500/10 text-indigo-300 border-indigo-500/20 text-xs font-semibold">
-              MBP Launch Version
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold tracking-tight" data-testid="pm-title">
+              Zentri AI Product Manager
+            </h1>
+            <Badge variant="secondary" className="text-xs font-semibold">
+              MBP Version
             </Badge>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
-            Zentri AI Product Manager
-          </h1>
-          <p className="text-sm text-slate-400 max-w-xl">
+          <p className="text-sm text-muted-foreground max-w-2xl">
             Turn messy, raw customer signals into structured problem clusters,
             prioritize bets with data-backed transparency, and author
             implementation-ready specifications.
@@ -413,31 +406,31 @@ export default function PMDashboard() {
         </div>
 
         {/* Global Action Stats */}
-        <div className="flex items-center gap-4 bg-slate-950/60 border border-slate-800/80 p-4 rounded-xl backdrop-blur">
-          <div className="text-center px-4 border-r border-slate-800">
-            <div className="text-xl font-bold text-slate-200">
+        <div className="flex items-center gap-4 bg-secondary/50 border border-border p-3 rounded-lg">
+          <div className="text-center px-4 border-r border-border">
+            <div className="text-xl font-bold text-foreground">
               {feedbackData?.length || 0}
             </div>
-            <div className="text-xxs uppercase tracking-wider text-slate-500 font-semibold">
+            <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
               Signals
             </div>
           </div>
-          <div className="text-center px-4 border-r border-slate-800">
-            <div className="text-xl font-bold text-indigo-400">
+          <div className="text-center px-4 border-r border-border">
+            <div className="text-xl font-bold text-foreground">
               {insightsData?.length || 0}
             </div>
-            <div className="text-xxs uppercase tracking-wider text-slate-500 font-semibold">
+            <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
               Insights
             </div>
           </div>
           <div className="text-center px-4">
-            <div className="text-xl font-bold text-emerald-400">
+            <div className="text-xl font-bold text-foreground">
               {betsData?.filter(
                 (b: any) =>
                   b.status === "approved" || b.status === "spec_generated",
               ).length || 0}
             </div>
-            <div className="text-xxs uppercase tracking-wider text-slate-500 font-semibold">
+            <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
               Approved
             </div>
           </div>
@@ -450,29 +443,29 @@ export default function PMDashboard() {
         onValueChange={setActiveTab}
         className="space-y-6"
       >
-        <div className="flex justify-between items-center border-b border-slate-800/80 pb-4">
-          <TabsList className="bg-slate-900/60 border border-slate-800/80 p-1 backdrop-blur">
+        <div className="flex justify-between items-center border-b border-border pb-4">
+          <TabsList className="bg-secondary/50 border border-border p-1">
             <TabsTrigger
               value="ingest"
-              className="data-[state=active]:bg-slate-800 data-[state=active]:text-white flex items-center gap-2"
+              className="flex items-center gap-2"
             >
               <Upload className="size-3.5" /> Ingest signals
             </TabsTrigger>
             <TabsTrigger
               value="insights"
-              className="data-[state=active]:bg-slate-800 data-[state=active]:text-white flex items-center gap-2"
+              className="flex items-center gap-2"
             >
               <Sparkles className="size-3.5" /> Clustered Insights
             </TabsTrigger>
             <TabsTrigger
               value="priorities"
-              className="data-[state=active]:bg-slate-800 data-[state=active]:text-white flex items-center gap-2"
+              className="flex items-center gap-2"
             >
-              <SlidersHorizontal className="size-3.5" /> priority Scoreboard
+              <SlidersHorizontal className="size-3.5" /> Priority Scoreboard
             </TabsTrigger>
             <TabsTrigger
               value="specs"
-              className="data-[state=active]:bg-slate-800 data-[state=active]:text-white flex items-center gap-2"
+              className="flex items-center gap-2"
             >
               <FileText className="size-3.5" /> Specs Editor
             </TabsTrigger>
@@ -485,7 +478,7 @@ export default function PMDashboard() {
               disabled={
                 isClustering || !feedbackData || feedbackData.length === 0
               }
-              className="bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs flex items-center gap-2 shadow-lg shadow-indigo-600/10 border-none"
+              className="flex items-center gap-2"
             >
               {isClustering ? (
                 "Clustering..."
@@ -496,6 +489,7 @@ export default function PMDashboard() {
               )}
             </Button>
             <Button
+              variant="default"
               onClick={triggerPrioritization}
               disabled={
                 isPrioritizing || !insightsData || insightsData.length === 0
@@ -517,22 +511,21 @@ export default function PMDashboard() {
         <TabsContent value="ingest" className="space-y-6">
           {/* Guided workflow banner if empty */}
           {(!feedbackData || feedbackData.length === 0) && (
-            <Card className="border-indigo-500/20 bg-indigo-500/5 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500/10 rounded-full filter blur-xl pointer-events-none" />
+            <Card className="border-border bg-secondary/30 relative overflow-hidden">
               <CardContent className="p-6 md:p-8 flex flex-col md:flex-row gap-6 items-start justify-between">
                 <div className="space-y-2">
-                  <h3 className="text-lg font-semibold text-indigo-300">
+                  <h3 className="text-lg font-semibold text-foreground">
                     Welcome to Zentri AI Product Manager!
                   </h3>
-                  <p className="text-sm text-slate-300 max-w-2xl">
+                  <p className="text-sm text-muted-foreground max-w-2xl">
                     Get started by pasting customer feedback, interviews,
                     support logs, or Slack transcripts. Once you have imported
                     customer signals, the AI Insight Agent will group them into
                     structured product pain points.
                   </p>
-                  <div className="flex gap-4 pt-3 text-xs text-slate-400 font-semibold uppercase tracking-wider">
-                    <span className="flex items-center gap-1.5">
-                      <CheckCircle className="size-3.5 text-indigo-400" /> Step
+                  <div className="flex gap-4 pt-3 text-xs text-muted-foreground font-semibold uppercase tracking-wider">
+                    <span className="flex items-center gap-1.5 text-foreground">
+                      <CheckCircle className="size-3.5" /> Step
                       1: Ingest Signals
                     </span>
                     <span className="flex items-center gap-1.5 opacity-60">
@@ -546,8 +539,9 @@ export default function PMDashboard() {
                   </div>
                 </div>
                 <Button
+                  variant="outline"
                   onClick={downloadCsvTemplate}
-                  className="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700/80 flex items-center gap-2"
+                  className="flex items-center gap-2"
                 >
                   <FileSpreadsheet className="size-4" /> Get CSV Template
                 </Button>
@@ -557,11 +551,10 @@ export default function PMDashboard() {
 
           <div className="grid md:grid-cols-2 gap-6">
             {/* Input card */}
-            <Card className="border-slate-800 bg-slate-900/20 backdrop-blur-xl">
+            <Card className="border-border bg-card">
               <CardHeader>
-                <CardTitle className="text-lg font-bold text-slate-200 flex items-center gap-2">
-                  <Clipboard className="size-4.5 text-indigo-400" /> Manual
-                  Paste Ingest
+                <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2">
+                  <Clipboard className="size-4.5" /> Manual Paste Ingest
                 </CardTitle>
                 <CardDescription>
                   Paste customer interview transcripts, support logs, or core
@@ -572,24 +565,24 @@ export default function PMDashboard() {
                 <form onSubmit={handlePasteSubmit} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-xs font-semibold text-slate-400">
+                      <label className="text-xs font-semibold text-muted-foreground">
                         Source Name
                       </label>
                       <Input
                         value={feedbackSourceName}
                         onChange={(e) => setFeedbackSourceName(e.target.value)}
                         placeholder="e.g., Zendesk Ticket #1289"
-                        className="bg-slate-950/80 border-slate-800 text-slate-200 focus-visible:ring-indigo-500"
+                        className="bg-background border-border text-foreground focus-visible:ring-ring"
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs font-semibold text-slate-400">
+                      <label className="text-xs font-semibold text-muted-foreground">
                         Source Tag / Channel
                       </label>
                       <select
                         value={feedbackSource}
                         onChange={(e) => setFeedbackSource(e.target.value)}
-                        className="w-full rounded-md border border-slate-800 bg-slate-950/80 px-3 py-2 text-sm text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
                       >
                         <option value="slack">Slack Export</option>
                         <option value="support">Zendesk / Support</option>
@@ -601,7 +594,7 @@ export default function PMDashboard() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-slate-400">
+                    <label className="text-xs font-semibold text-muted-foreground">
                       Raw Feedback Text
                     </label>
                     <Textarea
@@ -609,13 +602,13 @@ export default function PMDashboard() {
                       value={pastedFeedback}
                       onChange={(e) => setPastedFeedback(e.target.value)}
                       placeholder="Paste unstructured raw feedback text, notes, or exact quotes here..."
-                      className="bg-slate-950/80 border-slate-800 text-slate-200 focus-visible:ring-indigo-500"
+                      className="bg-background border-border text-foreground focus-visible:ring-ring"
                     />
                   </div>
 
                   <Button
                     type="submit"
-                    className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium border-none shadow-md shadow-indigo-600/10"
+                    className="w-full"
                   >
                     Ingest Signal
                   </Button>

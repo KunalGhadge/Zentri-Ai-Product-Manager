@@ -350,9 +350,14 @@ export const generatePRDTool = createTool({
 
       let targetBet: any = null;
 
-      if (featureBetId) {
+      const isUUID = (val: string) =>
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(val);
+
+      if (featureBetId && isUUID(featureBetId)) {
         targetBet = await pmRepository.getFeatureBetById(featureBetId);
-      } else {
+      }
+
+      if (!targetBet) {
         // Fetch all feature bets and pick the most recent one that is approved
         const bets = await pmRepository.getFeatureBets(workspace.id);
         const approvedBets = bets.filter(
@@ -365,18 +370,16 @@ export const generatePRDTool = createTool({
           );
           targetBet = approvedBets[0];
         } else if (bets.length > 0) {
-          throw new Error(
-            "You have feature recommendations, but none are approved yet! Click Approve on a prioritised scoreboard card first.",
+          // Graceful fallback to highest-priority pending feature bet so it never fails
+          bets.sort(
+            (a, b) => b.priorityScoreFinal - a.priorityScoreFinal,
           );
+          targetBet = bets[0];
         } else {
           throw new Error(
-            "No feature bets found. Run feedback analysis and scoring first!",
+            "No feature recommendations found. Please run feedback analysis (@Analyze Feedback) and prioritization (@Prioritize Features) first!",
           );
         }
-      }
-
-      if (!targetBet) {
-        throw new Error("Specified Feature Bet could not be found.");
       }
 
       // Generate the product specification
