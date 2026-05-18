@@ -405,38 +405,6 @@ export default function PMDashboard() {
           </p>
         </div>
 
-        {/* Global Action Stats */}
-        <div className="flex items-center gap-4 bg-secondary/50 border border-border p-3 rounded-lg">
-          <div className="text-center px-4 border-r border-border">
-            <div className="text-xl font-bold text-foreground">
-              {feedbackData?.length || 0}
-            </div>
-            <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
-              Signals
-            </div>
-          </div>
-          <div className="text-center px-4 border-r border-border">
-            <div className="text-xl font-bold text-foreground">
-              {insightsData?.length || 0}
-            </div>
-            <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
-              Insights
-            </div>
-          </div>
-          <div className="text-center px-4">
-            <div className="text-xl font-bold text-foreground">
-              {betsData?.filter(
-                (b: any) =>
-                  b.status === "approved" || b.status === "spec_generated",
-              ).length || 0}
-            </div>
-            <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
-              Approved
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Main Tabs */}
       <Tabs
         value={activeTab}
