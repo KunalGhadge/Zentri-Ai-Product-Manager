@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     // Call the AI clusterer
     const { insights } = await clusterFeedbackIntoInsights(feedbacks);
 
-    const savedInsights = [];
+    const savedInsights: any[] = [];
 
     // Loop and insert into the database
     for (const insight of insights) {

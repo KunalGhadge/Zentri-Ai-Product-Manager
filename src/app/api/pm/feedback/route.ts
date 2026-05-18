@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
 
     // Check if it's a batch CSV upload or a single pasted item
     if (body.feedbacks && Array.isArray(body.feedbacks)) {
-      const savedFeedbacks = [];
+      const savedFeedbacks: any[] = [];
       const importBatchId = `batch_${Date.now()}`;
 
       for (const item of body.feedbacks) {

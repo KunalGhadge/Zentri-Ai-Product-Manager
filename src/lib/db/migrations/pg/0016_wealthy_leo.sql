@@ -1,0 +1,1 @@
+-- Empty migration file to satisfy journal history no-op

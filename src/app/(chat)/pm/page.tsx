@@ -16,6 +16,8 @@ import {
   FileSpreadsheet,
   MessageSquare,
   AlertCircle,
+  Edit2,
+  Lock,
 } from "lucide-react";
 import { Button } from "ui/button";
 import {
