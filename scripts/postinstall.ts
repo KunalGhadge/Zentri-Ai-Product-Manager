@@ -26,7 +26,7 @@ async function runCommand(command: string, description: string) {
     if (command === "pnpm db:migrate" && IS_VERCEL_ENV) {
       console.warn(
         "⚠️ Database migration failed during build, likely due to connection limits. " +
-        "The build will proceed, but you may need to apply migrations manually.",
+          "The build will proceed, but you may need to apply migrations manually.",
       );
     } else {
       process.exit(1);

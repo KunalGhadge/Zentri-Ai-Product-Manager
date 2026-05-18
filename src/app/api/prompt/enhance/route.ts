@@ -15,7 +15,10 @@ export async function POST(req: Request) {
     const { prompt } = await req.json();
 
     if (!prompt || prompt.trim().length === 0) {
-      return NextResponse.json({ error: "Prompt is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Prompt is required" },
+        { status: 400 },
+      );
     }
 
     // Load tool info to give the enhancer context

@@ -12,6 +12,11 @@ import {
   codebaseSearchTool,
   codebaseFileContentTool,
 } from "./code/codebase-search-tool";
+import {
+  analyzeFeedbackTool,
+  prioritizeFeaturesTool,
+  generatePRDTool,
+} from "./pm/pm-tools";
 
 export const APP_DEFAULT_TOOL_KIT: Record<
   AppDefaultToolkit,
@@ -35,5 +40,10 @@ export const APP_DEFAULT_TOOL_KIT: Record<
     [DefaultToolName.PythonExecution]: pythonExecutionTool,
     [DefaultToolName.CodebaseSearch]: codebaseSearchTool,
     [DefaultToolName.CodebaseFileContent]: codebaseFileContentTool,
+  },
+  [AppDefaultToolkit.ProductManager]: {
+    [DefaultToolName.AnalyzeFeedback]: analyzeFeedbackTool,
+    [DefaultToolName.PrioritizeFeatures]: prioritizeFeaturesTool,
+    [DefaultToolName.GeneratePRD]: generatePRDTool,
   },
 };

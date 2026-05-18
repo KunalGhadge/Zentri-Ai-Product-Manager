@@ -12,6 +12,8 @@ import {
   unique,
   varchar,
   index,
+  integer,
+  real,
 } from "drizzle-orm/pg-core";
 import { isNotNull } from "drizzle-orm";
 import { DBWorkflow, DBEdge, DBNode } from "app-types/workflow";
@@ -379,3 +381,110 @@ export const ChatExportCommentTable = pgTable("chat_export_comment", {
 export type ArchiveEntity = typeof ArchiveTable.$inferSelect;
 export type ArchiveItemEntity = typeof ArchiveItemTable.$inferSelect;
 export type BookmarkEntity = typeof BookmarkTable.$inferSelect;
+
+// ==========================================
+// AI Product Manager (PM) Tables
+// ==========================================
+
+export const PmWorkspaceTable = pgTable("pm_workspace", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  name: text("name").notNull(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => UserTable.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: timestamp("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const PmRawFeedbackTable = pgTable("pm_raw_feedback", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  workspaceId: uuid("workspace_id")
+    .notNull()
+    .references(() => PmWorkspaceTable.id, { onDelete: "cascade" }),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => UserTable.id, { onDelete: "cascade" }),
+  sourceName: text("source_name").notNull(),
+  sourceType: varchar("source_type", { length: 50 }).notNull(), // interview, support, survey, slack, other
+  content: text("content").notNull(),
+  occurredAt: timestamp("occurred_at")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+  importBatchId: text("import_batch_id"),
+  createdAt: timestamp("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const PmInsightTable = pgTable("pm_insight", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  workspaceId: uuid("workspace_id")
+    .notNull()
+    .references(() => PmWorkspaceTable.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  summary: text("summary").notNull(),
+  status: varchar("status", { length: 30 }).notNull().default("active"), // active, resolved, archived
+  createdAt: timestamp("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const PmEvidenceTable = pgTable("pm_evidence", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  insightId: uuid("insight_id")
+    .notNull()
+    .references(() => PmInsightTable.id, { onDelete: "cascade" }),
+  feedbackId: uuid("feedback_id")
+    .notNull()
+    .references(() => PmRawFeedbackTable.id, { onDelete: "cascade" }),
+  exactQuote: text("exact_quote").notNull(),
+  startOffset: integer("start_offset"),
+  endOffset: integer("end_offset"),
+  createdAt: timestamp("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const PmFeatureBetTable = pgTable("pm_feature_bet", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  workspaceId: uuid("workspace_id")
+    .notNull()
+    .references(() => PmWorkspaceTable.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  volumeScore: integer("volume_score").notNull().default(1),
+  severityScore: integer("severity_score").notNull().default(1),
+  businessImpactScore: integer("business_impact_score").notNull().default(1),
+  confidenceScore: integer("confidence_score").notNull().default(1),
+  priorityScoreFinal: real("priority_score_final").notNull().default(0),
+  priorityReasoning: text("priority_reasoning").notNull(),
+  status: varchar("status", { length: 30 }).notNull().default("pending"), // pending, approved, spec_generated, completed, rejected
+  createdAt: timestamp("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const PmFeatureBetInsightLinkTable = pgTable(
+  "pm_feature_bet_insight_link",
+  {
+    id: uuid("id").primaryKey().notNull().defaultRandom(),
+    featureBetId: uuid("feature_bet_id")
+      .notNull()
+      .references(() => PmFeatureBetTable.id, { onDelete: "cascade" }),
+    insightId: uuid("insight_id")
+      .notNull()
+      .references(() => PmInsightTable.id, { onDelete: "cascade" }),
+  },
+);
+
+export const PmExecutionAssetTable = pgTable("pm_execution_asset", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  featureBetId: uuid("feature_bet_id")
+    .notNull()
+    .references(() => PmFeatureBetTable.id, { onDelete: "cascade" }),
+  type: varchar("type", { length: 30 }).notNull().default("prd"), // prd, user_stories, tasks
+  version: text("version").notNull().default("1.0.0"),
+  content: text("content").notNull(), // Markdown text
+  createdAt: timestamp("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export type PmWorkspaceEntity = typeof PmWorkspaceTable.$inferSelect;
+export type PmRawFeedbackEntity = typeof PmRawFeedbackTable.$inferSelect;
+export type PmInsightEntity = typeof PmInsightTable.$inferSelect;
+export type PmEvidenceEntity = typeof PmEvidenceTable.$inferSelect;
+export type PmFeatureBetEntity = typeof PmFeatureBetTable.$inferSelect;
+export type PmFeatureBetInsightLinkEntity =
+  typeof PmFeatureBetInsightLinkTable.$inferSelect;
+export type PmExecutionAssetEntity = typeof PmExecutionAssetTable.$inferSelect;

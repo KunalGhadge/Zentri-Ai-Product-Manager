@@ -16,7 +16,12 @@ import {
   ChatMetadata,
   ManualToolConfirmTag,
 } from "app-types/chat";
-import { errorToString, exclude, objectFlow, toUserFriendlyError } from "lib/utils";
+import {
+  errorToString,
+  exclude,
+  objectFlow,
+  toUserFriendlyError,
+} from "lib/utils";
 import logger from "logger";
 import {
   AllowedMCPServer,

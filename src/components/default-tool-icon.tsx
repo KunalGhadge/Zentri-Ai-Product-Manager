@@ -10,6 +10,9 @@ import {
   CodeIcon,
   HammerIcon,
   TableOfContents,
+  Sparkles,
+  SlidersHorizontal,
+  FileText,
 } from "lucide-react";
 import { useMemo } from "react";
 
@@ -56,6 +59,19 @@ export function DefaultToolIcon({
     }
     if (name === DefaultToolName.PythonExecution) {
       return <CodeIcon className={cn("size-3.5 text-blue-400", className)} />;
+    }
+    if (name === DefaultToolName.AnalyzeFeedback) {
+      return <Sparkles className={cn("size-3.5 text-indigo-400", className)} />;
+    }
+    if (name === DefaultToolName.PrioritizeFeatures) {
+      return (
+        <SlidersHorizontal
+          className={cn("size-3.5 text-emerald-400", className)}
+        />
+      );
+    }
+    if (name === DefaultToolName.GeneratePRD) {
+      return <FileText className={cn("size-3.5 text-amber-400", className)} />;
     }
     return <HammerIcon className={cn("size-3.5", className)} />;
   }, [name]);

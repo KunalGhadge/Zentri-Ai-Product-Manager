@@ -4,7 +4,10 @@ import { useCallback, useState } from "react";
 import { upload as uploadToVercelBlob } from "@vercel/blob/client";
 import useSWR from "swr";
 import { toast } from "sonner";
-import { getStorageInfoAction, checkStorageAction } from "@/app/api/storage/actions";
+import {
+  getStorageInfoAction,
+  checkStorageAction,
+} from "@/app/api/storage/actions";
 
 // Types
 interface StorageInfo {
@@ -99,7 +102,7 @@ export function useFileUpload() {
         if (storageType === "vercel-blob") {
           // Proactively check storage config to show helpful error if BLOB_READ_WRITE_TOKEN is missing
           const storageCheck = await checkStorageAction();
-          
+
           if (!storageCheck.isValid) {
             toast.error(storageCheck.error || "Storage configuration error", {
               description: storageCheck.solution,

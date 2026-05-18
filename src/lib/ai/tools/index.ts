@@ -3,6 +3,7 @@ export enum AppDefaultToolkit {
   WebSearch = "webSearch",
   Http = "http",
   Code = "code",
+  ProductManager = "productManager",
 }
 
 export enum DefaultToolName {
@@ -17,6 +18,9 @@ export enum DefaultToolName {
   PythonExecution = "python-execution",
   CodebaseSearch = "codebase-search",
   CodebaseFileContent = "codebase-file-content",
+  AnalyzeFeedback = "analyzeFeedback",
+  PrioritizeFeatures = "prioritizeFeatures",
+  GeneratePRD = "generatePRD",
 }
 
 export const SequentialThinkingToolName = "sequential-thinking";

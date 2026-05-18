@@ -386,6 +386,19 @@ export function ChatMentionInputSuggestion({
           label = "python-execution";
           description = "Execute simple python code";
           break;
+        case DefaultToolName.AnalyzeFeedback:
+          label = "Analyze Feedback";
+          description = "Cluster customer feedback into structured pain points";
+          break;
+        case DefaultToolName.PrioritizeFeatures:
+          label = "Prioritize Features";
+          description = "Rank feature recommendations based on user evidence";
+          break;
+        case DefaultToolName.GeneratePRD:
+          label = "Generate PRD";
+          description =
+            "Create lean specs and technical tasks for approved bets";
+          break;
       }
       return {
         id: toolName,
