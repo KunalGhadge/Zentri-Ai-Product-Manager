@@ -7,7 +7,6 @@ import {
   PmFeatureBetTable,
   PmFeatureBetInsightLinkTable,
   PmExecutionAssetTable,
-  UserTable,
 } from "../schema.pg";
 import { eq, and, desc } from "drizzle-orm";
 import { generateUUID } from "lib/utils";

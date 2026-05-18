@@ -348,7 +348,7 @@ export const generatePRDTool = createTool({
       const userId = session.user.id;
       const workspace = await pmRepository.getOrCreateDefaultWorkspace(userId);
 
-      let targetBet = null;
+      let targetBet: any = null;
 
       if (featureBetId) {
         targetBet = await pmRepository.getFeatureBetById(featureBetId);
