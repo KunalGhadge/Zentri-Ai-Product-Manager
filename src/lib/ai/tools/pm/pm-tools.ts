@@ -42,7 +42,7 @@ export const analyzeFeedbackTool = createTool({
         );
       }
 
-      const savedInsights = [];
+      const savedInsights: any[] = [];
       for (const insight of insights) {
         const evidenceList = insight.evidence.map((ev) => ({
           feedbackId: ev.feedbackId,
@@ -181,7 +181,7 @@ export const prioritizeFeaturesTool = createTool({
         );
       }
 
-      const savedFeatureBets = [];
+      const savedFeatureBets: any[] = [];
       for (const bet of featureBets) {
         const saved = await pmRepository.createFeatureBet(
           {
