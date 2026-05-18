@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     // Call the Priority Agent
     const { featureBets } = await prioritizeInsightsIntoFeatureBets(insights);
 
-    const savedFeatureBets = [];
+    const savedFeatureBets: any[] = [];
 
     // Loop and insert into the database
     for (const bet of featureBets) {
