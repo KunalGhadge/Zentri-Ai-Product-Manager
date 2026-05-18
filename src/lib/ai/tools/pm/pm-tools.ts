@@ -77,8 +77,10 @@ export const analyzeFeedbackTool = createTool({
             startedAt: startTime,
             endedAt: startTime + 1000,
             result: {
-              workspaceId: workspace.id,
-              recordsIngested: feedbacks.length,
+              output: {
+                workspaceId: workspace.id,
+                recordsIngested: feedbacks.length,
+              },
             },
           },
           {
@@ -89,8 +91,10 @@ export const analyzeFeedbackTool = createTool({
             startedAt: startTime + 1000,
             endedAt: startTime + 3000,
             result: {
-              clustersFound: insights.length,
-              identifiedProblemThemes: insights.map((i) => i.title),
+              output: {
+                clustersFound: insights.length,
+                identifiedProblemThemes: insights.map((i) => i.title),
+              },
             },
           },
           {
@@ -101,10 +105,12 @@ export const analyzeFeedbackTool = createTool({
             startedAt: startTime + 3000,
             endedAt: startTime + 4500,
             result: {
-              evidenceQuotesLinked: insights.reduce(
-                (acc, curr) => acc + curr.evidence.length,
-                0,
-              ),
+              output: {
+                evidenceQuotesLinked: insights.reduce(
+                  (acc, curr) => acc + curr.evidence.length,
+                  0,
+                ),
+              },
             },
           },
           {
@@ -115,8 +121,10 @@ export const analyzeFeedbackTool = createTool({
             startedAt: startTime + 4500,
             endedAt: Date.now(),
             result: {
-              insightsSavedCount: savedInsights.length,
-              persistedStatus: "active",
+              output: {
+                insightsSavedCount: savedInsights.length,
+                persistedStatus: "active",
+              },
             },
           },
         ],
@@ -222,7 +230,9 @@ export const prioritizeFeaturesTool = createTool({
             startedAt: startTime,
             endedAt: startTime + 800,
             result: {
-              activeInsightsCount: insights.length,
+              output: {
+                activeInsightsCount: insights.length,
+              },
             },
           },
           {
@@ -233,8 +243,10 @@ export const prioritizeFeaturesTool = createTool({
             startedAt: startTime + 800,
             endedAt: startTime + 2500,
             result: {
-              scoringModel: "Severity-Volume Ratio",
-              featuresFormulated: featureBets.length,
+              output: {
+                scoringModel: "Severity-Volume Ratio",
+                featuresFormulated: featureBets.length,
+              },
             },
           },
           {
@@ -245,7 +257,9 @@ export const prioritizeFeaturesTool = createTool({
             startedAt: startTime + 2500,
             endedAt: startTime + 4000,
             result: {
-              marketImpactFactors: ["SeverityScore", "BusinessImpactScore"],
+              output: {
+                marketImpactFactors: ["SeverityScore", "BusinessImpactScore"],
+              },
             },
           },
           {
@@ -256,7 +270,9 @@ export const prioritizeFeaturesTool = createTool({
             startedAt: startTime + 4000,
             endedAt: startTime + 5000,
             result: {
-              metricApplied: "VolumeQuoteProportion",
+              output: {
+                metricApplied: "VolumeQuoteProportion",
+              },
             },
           },
           {
@@ -267,8 +283,10 @@ export const prioritizeFeaturesTool = createTool({
             startedAt: startTime + 5000,
             endedAt: Date.now(),
             result: {
-              betsFormulatedCount: savedFeatureBets.length,
-              persistedStatus: "pending",
+              output: {
+                betsFormulatedCount: savedFeatureBets.length,
+                persistedStatus: "pending",
+              },
             },
           },
         ],
@@ -399,8 +417,10 @@ export const generatePRDTool = createTool({
             startedAt: startTime,
             endedAt: startTime + 800,
             result: {
-              betId: targetBet.id,
-              betTitle: targetBet.title,
+              output: {
+                betId: targetBet.id,
+                betTitle: targetBet.title,
+              },
             },
           },
           {
@@ -411,13 +431,15 @@ export const generatePRDTool = createTool({
             startedAt: startTime + 800,
             endedAt: startTime + 3500,
             result: {
-              sectionsDrafted: [
-                "Context",
-                "UserStories",
-                "Requirements",
-                "OutofScope",
-              ],
-              prdContentLength: prdMarkdown.length,
+              output: {
+                sectionsDrafted: [
+                  "Context",
+                  "UserStories",
+                  "Requirements",
+                  "OutofScope",
+                ],
+                prdContentLength: prdMarkdown.length,
+              },
             },
           },
           {
@@ -428,8 +450,10 @@ export const generatePRDTool = createTool({
             startedAt: startTime + 3500,
             endedAt: startTime + 5500,
             result: {
-              checklistsFormulatedCount: 4,
-              tasksContentLength: tasksMarkdown.length,
+              output: {
+                checklistsFormulatedCount: 4,
+                tasksContentLength: tasksMarkdown.length,
+              },
             },
           },
           {
@@ -440,9 +464,11 @@ export const generatePRDTool = createTool({
             startedAt: startTime + 5500,
             endedAt: Date.now(),
             result: {
-              prdSaved: true,
-              tasksSaved: true,
-              newStatus: "spec_generated",
+              output: {
+                prdSaved: true,
+                tasksSaved: true,
+                newStatus: "spec_generated",
+              },
             },
           },
         ],
